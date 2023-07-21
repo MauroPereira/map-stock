@@ -1,0 +1,10 @@
+CREATE_CHAR = 0x003E  # ">"
+READ_ID_CHAR = 0x003C  # "<"
+READ_LST_CHAR = 0xC2AB  # "«"
+UPDATE_CHAR = 0x005E  # "^"
+DELETE_CHAR = 0xC2B5  # "µ"
+OK_CHAR = 0xC2B9  # ¹
+OKD_CHAR = 0xC2B2  # ²
+NOK_CHAR = 0xC2B0  # °
+ID_NF_CHAR = 0x0021  # !
+UNK_ERROR_CHAR = 0xC2AE  # ®
