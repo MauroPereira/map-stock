@@ -305,18 +305,17 @@ class PeeweeDb:
             print("Error en peewee desconocido: {0}.".format(error))
 
 
- class TablaPlacas:           
-    def __init__(self, nombre_tabla_placas = "PlacaDisplay"):
+class TablaPlacas:
+    def __init__(self, nombre_tabla_placas="PlacaDisplay"):
         """
         Método que crear una nueva tabla del tipo Placas
         """
         try:
-            NuevaPlaca =  type(nombre_tabla_placas, (Placas,), {})
+            NuevaPlaca = type(nombre_tabla_placas, (Placas,), {})
             mi_base.create_tables[(NuevaPlaca)]
-            self.nombre_placa = NuevaPlaca() # necesario
+            self.nombre_placa = NuevaPlaca()  # necesario
         except Exception as error:
             print("Error al crear nueva tabla Placas: {0}.".format(error))
-
 
     def alta(
         self,
@@ -363,9 +362,10 @@ if __name__ == "__main__":
     # Ingresa el nombre de la placa
     nombre_placa = "PlacaDisplay"
 
-    TablaPlacas(nombre_placa); # se crea la nueva tabla Placa     
-    TablaPlacas.alta() # se guarda informacion por defecto
-    TablaPlacas.alta(("MB-RES", "5.0")) # se guarda información
+    TablaPlacas(nombre_placa)
+    # se crea la nueva tabla Placa
+    TablaPlacas.alta()  # se guarda informacion por defecto
+    # TablaPlacas.alta(("MB-RES", "5.0"))  # se guarda información
 
     """    
     prueba_db.alta()
