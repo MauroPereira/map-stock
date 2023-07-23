@@ -310,8 +310,10 @@ class BoardsTable:
     Clase que crea una tabla board
     """
 
-    def __init__(self, board_name="PlacaDisplay"):
-        self.board_name = board_name  # atributo que define el name de la nueva placa
+    def __init__(self, nombre_placa="PlacaDisplay"):
+        self.nombre_placa = (
+            nombre_placa  # atributo que define el name de la nueva placa
+        )
 
     def createBoard(self):
         """
@@ -319,13 +321,12 @@ class BoardsTable:
         """
         try:
             print("hello")
-            NewBoard = type(
-                "pepe", (Boards,), {}
-            )  # se crea el nuevo tipo y se referencia a NuevaPlaca
-            print("hello")
-            database.create_tables[(NewBoard)]
-            print("hello")
-            self.board_name2 = NewBoard()  # se reutiliza el atributo
+            # se crea el nuevo tipo y se referencia a NuevaPlaca
+            NuevaPlaca = type(nombre_placa, (Placas,), {})
+            print("hello2")
+            mi_base.create_tables([NuevaPlaca])
+            print("hello3")
+            self.nombre_placa = NuevaPlaca()  # necesario
         except Exception as error:
             print("Error al crear nueva tabla Boards: {0}.".format(error))
 
@@ -372,21 +373,18 @@ if __name__ == "__main__":
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     # Ingresa el nombre de la placa
-    nombre_placa = "PlacaDisplay22"
+    nombre_placa = "Pepe"
 
-    NuevaPlaca = type(nombre_placa, (Placas,), {})
+    nuevaPlaca = BoardsTable(nombre_placa)
+    nuevaPlaca.createBoard()
 
-    mi_base.create_tables([NuevaPlaca])
+    # nuevaPlaca.component_name = "MB-TR"
+    # nuevaPlaca.quantity = 2.0
+    # nuevaPlaca.save()
 
-    nombre_placa = NuevaPlaca()  # necesario
-
-    nombre_placa.component_name = "MB-TR"
-    nombre_placa.quantity = 2.0
-    nombre_placa.save()
-
-    nombre_placa.component_name = "MB-RES"
-    nombre_placa.quantity = "5.0"
-    nombre_placa.save()
+    # nuevaPlaca.component_name = "MB-RES"
+    # nuevaPlaca.quantity = "5.0"
+    # nuevaPlaca.save()
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
