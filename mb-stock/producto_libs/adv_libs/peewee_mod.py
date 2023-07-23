@@ -34,22 +34,22 @@ elif __name__ == "producto_libs.adv_libs.peewee_mod":
         conv_lista_de_lista,
     )
 
-nombre_db: "nombre de la base de datos" = "../../database/bd.db"
+db_name: "name de la base de datos" = "../../database/bd.db"
 
 try:
-    ruta = os.path.dirname(os.path.abspath(__file__)) + "/" + nombre_db
-    print("Ruta DB: " + ruta)
-    mi_base = SqliteDatabase(ruta)
+    db_path = os.path.dirname(os.path.abspath(__file__)) + "/" + db_name
+    print("db_path DB: " + db_path)
+    mi_base = SqliteDatabase(db_path)
 
     def make_table_name(model_class):
         """
-        Función que devuelve un nombre de la tabla en base al nombre de la clase
+        Función que devuelve un name de la tabla en base al name de la clase
         """
 
-        model_name = model_class.__name__  # se obtiene el nombre de la clase
+        model_name = model_class.__name__  # se obtiene el name de la clase
         return model_name.lower() + "_tbl"
 
-    class ModeloBase(Model):
+    class BaseModel(Model):
         """
         Necesario 1: heredar la clase Model de Peewee
         """
@@ -63,7 +63,7 @@ try:
             database = mi_base
             table_function = make_table_name  # llama a la funcion renombrar
 
-    class Componentes(ModeloBase):
+    class Components(BaseModel):
         """
         Clase que se convertira en la tabla y en la cual se definen
         los campos.
@@ -72,32 +72,32 @@ try:
         ####
         # A replicar:
         #
-        # query = """ CREATE TABLE IF NOT EXISTS Componentes
+        # query = """ CREATE TABLE IF NOT EXISTS Components
         #        ( id INTEGER PRIMARY KEY
-        #        , descripcion TEXT
-        #        , proveedor TEXT
-        #        , precio REAL ) """
+        #        , description TEXT
+        #        , supplier TEXT
+        #        , price REAL ) """
         ####
 
         id = PrimaryKeyField(null=False)
-        nombre = TextField(null=False)
-        cantidad = FloatField(null=False)
-        descripcion = TextField(null=False)
-        proveedor = TextField(null=False)
-        precio = FloatField(null=False)
+        name = TextField(null=False)
+        quantity = FloatField(null=False)
+        description = TextField(null=False)
+        supplier = TextField(null=False)
+        price = FloatField(null=False)
 
-    class Placas(ModeloBase):
+    class Placas(BaseModel):
         """
         Clase que se convertira en la tabla y en la cual se definen
         los campos.
         """
 
         id = PrimaryKeyField(null=False)
-        nombre_componente = ForeignKeyField(Componentes, to_field="nombre")
-        cantidad = FloatField(null=False)
+        component_name = ForeignKeyField(Components, to_field="name")
+        quantity = FloatField(null=False)
 
     mi_base.connect()
-    mi_base.create_tables([Componentes])  # por defecto crea una tabla Componentes
+    mi_base.create_tables([Components])  # por defecto crea una tabla Components
     print(
         "peweee_mod: Base de datos sqlite3 con peewee creada y/o conectada "
         "exitosamente.\n"
@@ -132,13 +132,13 @@ class PeeweeDb:
         lista_datos = []
 
         try:
-            for datos in Componentes.select():
+            for datos in Components.select():
                 lista_datos.append(
                     (
                         str(datos.id),
-                        str(datos.descripcion),
-                        str(datos.proveedor),
-                        str(datos.precio),
+                        str(datos.description),
+                        str(datos.supplier),
+                        str(datos.price),
                     )
                 )
             lista_datos.append((OK_CHAR,))  # se convierte en tupla
@@ -163,17 +163,17 @@ class PeeweeDb:
         lista_datos = []
 
         try:
-            datos = Componentes.get(Componentes.id == consulta_id)
+            datos = Components.get(Components.id == consulta_id)
             lista_datos.append(
                 (
                     str(datos.id),
-                    str(datos.descripcion),
-                    str(datos.proveedor),
-                    str(datos.precio),
+                    str(datos.description),
+                    str(datos.supplier),
+                    str(datos.price),
                 )
             )
             lista_datos.append((OKD_CHAR,))  # se convierte en tupla
-        except Componentes.DoesNotExist:
+        except Components.DoesNotExist:
             print("Error en peewee: No existe el ID")
             lista_datos.append(
                 (
@@ -213,9 +213,9 @@ class PeeweeDb:
         lista_datos = []
 
         try:
-            datos_a_actualizar = Componentes.update(
-                descripcion=datos[1], proveedor=datos[2], precio=datos[3]
-            ).where(Componentes.id == datos[0])
+            datos_a_actualizar = Components.update(
+                description=datos[1], supplier=datos[2], price=datos[3]
+            ).where(Components.id == datos[0])
             cant = datos_a_actualizar.execute()
             print("peweee_mod: Registros actualizados: " + str(cant))
             if cant == 0:
@@ -239,11 +239,11 @@ class PeeweeDb:
         lista_datos = []
 
         try:
-            datos_a_borrar = Componentes.get_by_id(datos)
+            datos_a_borrar = Components.get_by_id(datos)
             datos_a_borrar.delete_instance()
             print(
                 "peweee_mod: Registros restantes luego de la eliminación: "
-                + str(Componentes.select().count())
+                + str(Components.select().count())
             )
             lista_datos.append((OK_CHAR,))  # se convierte en tupla
         except DoesNotExist:
@@ -273,12 +273,12 @@ class PeeweeDb:
         # Modo Peewee Sqlite3
         lista_datos = []
 
-        tabla_db = Componentes()
-        tabla_db.nombre = datos[0]
-        tabla_db.cantidad = datos[1]
-        tabla_db.descripcion = datos[2]
-        tabla_db.proveedor = datos[3]
-        tabla_db.precio = datos[4]
+        tabla_db = Components()
+        tabla_db.name = datos[0]
+        tabla_db.quantity = datos[1]
+        tabla_db.description = datos[2]
+        tabla_db.supplier = datos[3]
+        tabla_db.price = datos[4]
         cant = tabla_db.save()
         if cant != 0:
             print("peweee_mod: Registros agregados: " + str(cant))
@@ -305,45 +305,57 @@ class PeeweeDb:
             print("Error en peewee desconocido: {0}.".format(error))
 
 
-class TablaPlacas:
-    def __init__(self, nombre_tabla_placas="PlacaDisplay"):
+class BoardsTable:
+    """
+    Clase que crea una tabla board
+    """
+
+    def __init__(self, board_name="PlacaDisplay"):
+        self.board_name = board_name  # atributo que define el name de la nueva placa
+
+    def createBoard(self):
         """
-        Método que crear una nueva tabla del tipo Placas
+        Método se crea la nueva tabla Placa
         """
         try:
-            NuevaPlaca = type(nombre_tabla_placas, (Placas,), {})
-            mi_base.create_tables[(NuevaPlaca)]
-            self.nombre_placa = NuevaPlaca()  # necesario
+            print("hello")
+            NewBoard = type(
+                "pepe", (Boards,), {}
+            )  # se crea el nuevo tipo y se referencia a NuevaPlaca
+            print("hello")
+            database.create_tables[(NewBoard)]
+            print("hello")
+            self.board_name2 = NewBoard()  # se reutiliza el atributo
         except Exception as error:
-            print("Error al crear nueva tabla Placas: {0}.".format(error))
+            print("Error al crear nueva tabla Boards: {0}.".format(error))
 
-    def alta(
+    def create(
         self,
-        datos: "tupla" = ("MB-TR", 0.0),
+        datas: "tupla" = ("MB-TR", 0.0),
     ):
         """
-        Método que se encarga insertar información en un tipo de tabla Placas
+        Método que se encarga insertar información en un tipo de tabla Boards
         """
 
         # Chequea que el primer parámetro sea una tupla. Esto es necesario
         # porque en las intrucciones de crud sobre la base de datos se utiliza
         # formateo de cadenas con tuplas.
-        if type(datos) != tuple:
+        if type(datas) != tuple:
             raise TypeError("El primer parámetro no es una tupla.")
 
         # Modo Peewee Sqlite3
-        lista_datos = []
+        data_list = []
 
-        self.nombre_placa.nombre_componente = datos[0]
-        self.nombre_placa.cantidad = datos[1]
-        cant = self.nombre_placa.save()
+        self.board_name.component_name = data_list[0]
+        self.board_name.quantity = data_list[1]
+        quantity = self.board_name.save()
 
-        if cant != 0:
-            print("peweee_mod: Registros agregados: " + str(cant))
-            lista_datos.append((OK_CHAR,))  # se convierte en tupla
+        if quantity != 0:
+            print("peweee_mod: Registros agregados: " + str(quantity))
+            data_list.append((OK_CHAR,))  # se convierte en tupla
         else:  # error inesperado
-            lista_datos.append((NOK_CHAR,))  # se convierte en tupla
-        return conv_lista_de_lista(lista_datos)
+            data_list.append((NOK_CHAR,))  # se convierte en tupla
+        return conv_lista_de_lista(data_list)
 
 
 if __name__ == "__main__":
@@ -360,12 +372,25 @@ if __name__ == "__main__":
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     # Ingresa el nombre de la placa
-    nombre_placa = "PlacaDisplay"
+    nombre_placa = "PlacaDisplay22"
 
-    TablaPlacas(nombre_placa)
+    NuevaPlaca = type(nombre_placa, (Placas,), {})
+
+    mi_base.create_tables([NuevaPlaca])
+
+    nombre_placa = NuevaPlaca()  # necesario
+
+    nombre_placa.component_name = "MB-TR"
+    nombre_placa.quantity = 2.0
+    nombre_placa.save()
+
+    nombre_placa.component_name = "MB-RES"
+    nombre_placa.quantity = "5.0"
+    nombre_placa.save()
+
     # se crea la nueva tabla Placa
-    TablaPlacas.alta()  # se guarda informacion por defecto
-    # TablaPlacas.alta(("MB-RES", "5.0"))  # se guarda información
+    # BoardsTable.alta()  # se guarda informacion por defecto
+    # BoardsTable.alta(("MB-RES", "5.0"))  # se guarda información
 
     """    
     prueba_db.alta()
