@@ -310,10 +310,8 @@ class BoardsTable:
     Clase que crea una tabla board
     """
 
-    def __init__(self, nombre_placa="PlacaDisplay"):
-        self.nombre_placa = (
-            nombre_placa  # atributo que define el name de la nueva placa
-        )
+    def __init__(self):
+        self.nombre_placa = __class__.__name__.lower()
 
     def createBoard(self):
         """
@@ -372,11 +370,8 @@ if __name__ == "__main__":
     prueba_db.alta()
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
-    # Ingresa el nombre de la placa
-    nombre_placa = "Pepe"
-
-    nuevaPlaca = BoardsTable(nombre_placa)
-    nuevaPlaca.createBoard()
+    placaValentina = BoardsTable()
+    placaValentina.createBoard()
 
     # nuevaPlaca.component_name = "MB-TR"
     # nuevaPlaca.quantity = 2.0
