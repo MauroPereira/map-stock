@@ -327,9 +327,6 @@ class BoardsTable:
         except Exception as error:
             print("Error al crear nueva tabla Boards: {0}.".format(error))
 
-    def __str__(self):
-        return str(self.board_name)
-
     def create(
         self,
         data: "tupla" = ("MB-TR", 0.0),
@@ -347,15 +344,19 @@ class BoardsTable:
         # Modo Peewee Sqlite3
         data_list = []
 
-        self.board_name.component_name = data[0]
-        self.board_name.quantity = data[1]
-        quantity = self.board_name.save()
+        try:
+            self.board_name.component_name = data[0]
+            self.board_name.quantity = data[1]
+            quantity = self.board_name.save()
 
-        if quantity != 0:
-            print("peweee_mod: Registros agregados: " + str(quantity))
-            data_list.append((OK_CHAR,))  # se convierte en tupla
-        else:  # error inesperado
-            data_list.append((NOK_CHAR,))  # se convierte en tupla
+            if quantity != 0:
+                print("peweee_mod: Registros agregados: " + str(quantity))
+                data_list.append((OK_CHAR,))  # se convierte en tupla
+            else:  # error inesperado
+                data_list.append((NOK_CHAR,))  # se convierte en tupla
+        except Exception as error:
+            print("Error en peewee desconocido: {0}.".format(error))
+            data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
         return conv_lista_de_lista(data_list)
 
 
