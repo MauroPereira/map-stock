@@ -1,6 +1,7 @@
 import os
 import sys
 import inspect
+from time import strftime
 from peewee import FloatField
 from peewee import SqliteDatabase
 from peewee import TextField
@@ -313,6 +314,9 @@ class BoardsTable:
     def __init__(self):
         self.nombre_placa = __class__.__name__.lower()
 
+    def __str__(self):
+        return str(self.nombre_placa)
+
     def createBoard(self):
         """
         Método se crea la nueva tabla Placa
@@ -320,7 +324,7 @@ class BoardsTable:
         try:
             print("hello")
             # se crea el nuevo tipo y se referencia a NuevaPlaca
-            NuevaPlaca = type(nombre_placa, (Placas,), {})
+            NuevaPlaca = type(self.nombre_placa, (Placas,), {})
             print("hello2")
             mi_base.create_tables([NuevaPlaca])
             print("hello3")
@@ -371,7 +375,12 @@ if __name__ == "__main__":
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     placaValentina = BoardsTable()
+    print(str(placaValentina))
     placaValentina.createBoard()
+
+    placaSimon = BoardsTable()
+    print(str(placaSimon))
+    placaSimon.createBoard()
 
     # nuevaPlaca.component_name = "MB-TR"
     # nuevaPlaca.quantity = 2.0
