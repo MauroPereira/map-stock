@@ -311,30 +311,28 @@ class BoardsTable:
     Clase que crea una tabla board
     """
 
-    def __init__(self):
-        self.nombre_placa = __class__.__name__.lower()
-
-    def __str__(self):
-        return str(self.nombre_placa)
-
-    def createBoard(self):
+    def __init__(self, board_name):
         """
         Método se crea la nueva tabla Placa
         """
+        self.board_name = board_name
         try:
             print("hello")
             # se crea el nuevo tipo y se referencia a NuevaPlaca
-            NuevaPlaca = type(self.nombre_placa, (Placas,), {})
+            NuevaPlaca = type(self.board_name, (Placas,), {})
             print("hello2")
             mi_base.create_tables([NuevaPlaca])
             print("hello3")
-            self.nombre_placa = NuevaPlaca()  # necesario
+            self.board_name = NuevaPlaca()  # necesario
         except Exception as error:
             print("Error al crear nueva tabla Boards: {0}.".format(error))
 
+    def __str__(self):
+        return str(self.board_name)
+
     def create(
         self,
-        datas: "tupla" = ("MB-TR", 0.0),
+        data: "tupla" = ("MB-TR", 0.0),
     ):
         """
         Método que se encarga insertar información en un tipo de tabla Boards
@@ -343,14 +341,14 @@ class BoardsTable:
         # Chequea que el primer parámetro sea una tupla. Esto es necesario
         # porque en las intrucciones de crud sobre la base de datos se utiliza
         # formateo de cadenas con tuplas.
-        if type(datas) != tuple:
+        if type(data) != tuple:
             raise TypeError("El primer parámetro no es una tupla.")
 
         # Modo Peewee Sqlite3
         data_list = []
 
-        self.board_name.component_name = data_list[0]
-        self.board_name.quantity = data_list[1]
+        self.board_name.component_name = data[0]
+        self.board_name.quantity = data[1]
         quantity = self.board_name.save()
 
         if quantity != 0:
@@ -374,21 +372,13 @@ if __name__ == "__main__":
     prueba_db.alta()
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
-    placaValentina = BoardsTable()
-    print(str(placaValentina))
-    placaValentina.createBoard()
+    nuevaPlaca = BoardsTable("nuevaPlaca")
+    nuevaPlaca.create(("MB-TR", 2.0))
+    nuevaPlaca.create(("MB-RES", 5.0))
 
-    placaSimon = BoardsTable()
-    print(str(placaSimon))
-    placaSimon.createBoard()
-
-    # nuevaPlaca.component_name = "MB-TR"
-    # nuevaPlaca.quantity = 2.0
-    # nuevaPlaca.save()
-
-    # nuevaPlaca.component_name = "MB-RES"
-    # nuevaPlaca.quantity = "5.0"
-    # nuevaPlaca.save()
+    nuevaPlaca2 = BoardsTable("nuevaPlaca2")
+    nuevaPlaca2.create(("MB-TR", 2.0))
+    nuevaPlaca2.create(("MB-RES", 5.0))
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
