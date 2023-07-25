@@ -7,4 +7,5 @@ OK_CHAR = 0xC2B9  # ¹
 OKD_CHAR = 0xC2B2  # ²
 NOK_CHAR = 0xC2B0  # °
 ID_NF_CHAR = 0x0021  # !
+DATA_NF_CHAR = 0x005D  # ]
 UNK_ERROR_CHAR = 0xC2AE  # ®
