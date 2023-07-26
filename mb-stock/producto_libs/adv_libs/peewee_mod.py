@@ -318,12 +318,9 @@ class BoardsTable:
         """
         self.board_name = board_name
         try:
-            print("hello")
             # se crea el nuevo tipo y se referencia a NuevaPlaca
             NuevaPlaca = type(self.board_name, (Placas,), {})
-            print("hello2")
             mi_base.create_tables([NuevaPlaca])
-            print("hello3")
             self.board_name = NuevaPlaca()  # necesario
         except Exception as error:
             print("Error al crear nueva tabla Boards: {0}.".format(error))
@@ -539,8 +536,8 @@ if __name__ == "__main__":
     placaDisplay.create(("MB-RES", 5.0))
 
     placaControl = BoardsTable("placaControl")
-    placaControl.create(("MB-TR", 2.0))
     placaControl.create(("MB-RES", 5.0))
+    placaControl.create(("MB-TR", 2.0))
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
