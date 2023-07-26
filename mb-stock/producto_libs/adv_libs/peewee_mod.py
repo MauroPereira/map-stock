@@ -534,13 +534,13 @@ if __name__ == "__main__":
     prueba_db.alta()
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
-    nuevaPlaca = BoardsTable("nuevaPlaca")
-    nuevaPlaca.create(("MB-TR", 2.0))
-    nuevaPlaca.create(("MB-RES", 5.0))
+    placaDisplay = BoardsTable("placaDisplay")
+    placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay.create(("MB-RES", 5.0))
 
-    nuevaPlaca2 = BoardsTable("nuevaPlaca2")
-    nuevaPlaca2.create(("MB-TR", 2.0))
-    nuevaPlaca2.create(("MB-RES", 5.0))
+    placaControl = BoardsTable("placaControl")
+    placaControl.create(("MB-TR", 2.0))
+    placaControl.create(("MB-RES", 5.0))
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
