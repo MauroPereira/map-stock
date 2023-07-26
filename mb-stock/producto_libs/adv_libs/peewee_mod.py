@@ -348,7 +348,12 @@ class BoardsTable:
             quantity = self.board_name.save()
 
             if quantity != 0:
-                print("peweee_mod: Registros agregados: " + str(quantity))
+                print(
+                    "peweee_mod: Registros agregados: "
+                    + str(quantity)
+                    + ", tabla db: "
+                    + str(self.board_name)
+                )
                 data_list.append((OK_CHAR,))  # se convierte en tupla
             else:  # error inesperado
                 data_list.append((NOK_CHAR,))  # se convierte en tupla
@@ -534,10 +539,13 @@ if __name__ == "__main__":
     placaDisplay = BoardsTable("placaDisplay")
     placaDisplay.create(("MB-TR", 2.0))
     placaDisplay.create(("MB-RES", 5.0))
+    placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay.create(("MB-TR", 2.0))
 
-    placaControl = BoardsTable("placaControl")
-    placaControl.create(("MB-RES", 5.0))
-    placaControl.create(("MB-TR", 2.0))
+    # placaControl = BoardsTable("placaControl")
+    # placaControl.create(("MB-RES", 5.0))
+    # placaControl.create(("MB-TR", 2.0))
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
