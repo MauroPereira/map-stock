@@ -317,6 +317,12 @@ class BoardsTable:
         Método se crea la nueva tabla Placa
         """
         self.board_name = board_name
+        self.connect() 
+
+    def connect(self):
+        """
+        Crea o conecta si ya existe con la tablas
+        """     
         try:
             # se crea el nuevo tipo y se referencia a NuevaPlaca
             NuevaPlaca = type(self.board_name, (Placas,), {})
@@ -343,6 +349,7 @@ class BoardsTable:
         data_list = []
 
         try:
+            self.connect()
             self.board_name.component_name = data[0]
             self.board_name.quantity = data[1]
             quantity = self.board_name.save()
@@ -537,15 +544,15 @@ if __name__ == "__main__":
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-TR", 2.0))
-    placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-RES", 5.0))
-    placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-TR", 2.0))
-    placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-TR", 2.0))
-    placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-TR", 2.0))
+    # placaDisplay.create(("MB-TR", 2.0))
+    
+    # placaDisplay.create(("MB-RES", 5.0))
+    
+    # placaDisplay.create(("MB-TR", 2.0))
+    
+    # placaDisplay.create(("MB-TR", 2.0))
+    
+    # placaDisplay.create(("MB-TR", 2.0))
 
     # placaControl = BoardsTable("placaControl")
     # placaControl.create(("MB-RES", 5.0))
