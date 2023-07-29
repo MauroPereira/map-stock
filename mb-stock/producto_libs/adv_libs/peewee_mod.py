@@ -324,10 +324,10 @@ class BoardsTable:
         Crea o conecta si ya existe con la tablas
         """     
         try:
-            # se crea el nuevo tipo y se referencia a NuevaPlaca
-            NuevaPlaca = type(self.board_name, (Placas,), {})
-            mi_base.create_tables([NuevaPlaca])
-            self.board_name = NuevaPlaca()  # necesario
+            # se crea el nuevo tipo y se referencia a NewBoard
+            NewBoard = type(self.board_name, (Placas,), {})
+            mi_base.create_tables([NewBoard])
+            self.new_board = NewBoard()  # necesario
         except Exception as error:
             print("Error al crear nueva tabla Boards: {0}.".format(error))
 
@@ -350,9 +350,9 @@ class BoardsTable:
 
         try:
             self.connect()
-            self.board_name.component_name = data[0]
-            self.board_name.quantity = data[1]
-            quantity = self.board_name.save()
+            self.new_board.component_name = data[0]
+            self.new_board.quantity = data[1]
+            quantity = self.new_board.save()
 
             if quantity != 0:
                 print(
@@ -544,7 +544,7 @@ if __name__ == "__main__":
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     placaDisplay = BoardsTable("placaDisplay")
-    # placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay.create(("MB-TR", 2.0))
     
     # placaDisplay.create(("MB-RES", 5.0))
     
