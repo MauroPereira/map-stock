@@ -538,9 +538,13 @@ if __name__ == "__main__":
 
     placaDisplay = BoardsTable("placaDisplay")
     placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay = BoardsTable("placaDisplay")
     placaDisplay.create(("MB-RES", 5.0))
+    placaDisplay = BoardsTable("placaDisplay")
     placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay = BoardsTable("placaDisplay")
     placaDisplay.create(("MB-TR", 2.0))
+    placaDisplay = BoardsTable("placaDisplay")
     placaDisplay.create(("MB-TR", 2.0))
 
     # placaControl = BoardsTable("placaControl")
