@@ -317,12 +317,12 @@ class BoardsTable:
         Método se crea la nueva tabla Placa
         """
         self.board_name = board_name
-        self.connect() 
+        self.connect()
 
     def connect(self):
         """
         Crea o conecta si ya existe con la tablas
-        """     
+        """
         try:
             # se crea el nuevo tipo y se referencia a NewBoard
             NewBoard = type(self.board_name, (Placas,), {})
@@ -385,7 +385,7 @@ class BoardsTable:
 
         if id == 0:
             try:
-                for data in self.board_name.select():
+                for data in self.new_board.select():
                     data_list.append(
                         (
                             str(data.id),
@@ -401,7 +401,7 @@ class BoardsTable:
 
         elif component_name == "":
             try:
-                data = self.board_name.get(self.board_name.id == id)
+                data = self.new_board.get(self.new_board.id == id)
                 data_list.append(
                     (
                         str(data.id),
@@ -410,7 +410,7 @@ class BoardsTable:
                     )
                 )
                 data_list.append((OKD_CHAR,))  # se convierte en tupla
-            except self.board_name.DoesNotExist:
+            except self.new_board.DoesNotExist:
                 print("Error en peewee: No existe el ID")
                 data_list.append(
                     (
@@ -435,7 +435,7 @@ class BoardsTable:
 
         elif id == "":
             try:
-                data = self.board_name.get(self.board_name.id == id)
+                data = self.new_board.get(self.new_board.id == id)
                 data_list.append(
                     (
                         str(data.id),
@@ -444,7 +444,7 @@ class BoardsTable:
                     )
                 )
                 data_list.append((OKD_CHAR,))  # se convierte en tupla
-            except self.board_name.DoesNotExist:
+            except self.new_board.DoesNotExist:
                 print("Error en peewee: No existe el nombre de componente")
                 data_list.append(
                     (
@@ -544,7 +544,7 @@ if __name__ == "__main__":
     prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-TR", 2.0))    
+    placaDisplay.create(("MB-TR", 2.0))
     placaDisplay.create(("MB-RES", 5.0))
     placaControl = BoardsTable("placaControl")
     placaControl.create(("MB-RES", 5.0))
@@ -552,6 +552,10 @@ if __name__ == "__main__":
     placaDisplay.create(("MB-TR", 2.0))
     placaDisplay.create(("MB-TR", 2.0))
     placaDisplay.create(("MB-TR", 2.0))
+    print("placaDisplay.read():")
+    print(placaDisplay.read())
+    print("placaControl.read():")
+    print(placaControl.read())
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
