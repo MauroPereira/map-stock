@@ -556,12 +556,7 @@ if __name__ == "__main__":
     placaDisplay.create(("MB-TR", 2.0))
     print("placaDisplay.read():")
     print(placaDisplay.read())
-    for sublist in placaDisplay.read():
-        if length_hint(sublist) > 1:
-            middle_index = len(sublist) // 2
-            middle_element = sublist[middle_index]
-            print(f"Middle element of sublist {sublist}: {middle_element}")
-            prueba_db.consulta_por_id(int(middle_element))
+
     print("placaControl.read():")
     print(placaControl.read())
 
