@@ -554,6 +554,11 @@ if __name__ == "__main__":
     placaDisplay.create(("MB-TR", 2.0))
     print("placaDisplay.read():")
     print(placaDisplay.read())
+    data = placaDisplay.read()
+    for sublist in data:
+        middle_index = len(sublist) // 2
+        middle_element = sublist[middle_index]
+        print(f"Middle element of sublist {sublist}: {middle_element}")
     print("placaControl.read():")
     print(placaControl.read())
 
