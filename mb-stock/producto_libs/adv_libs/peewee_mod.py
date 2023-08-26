@@ -561,6 +561,7 @@ if __name__ == "__main__":
             middle_index = len(sublist) // 2
             middle_element = sublist[middle_index]
             print(f"Middle element of sublist {sublist}: {middle_element}")
+            prueba_db.consulta_por_id(int(middle_element))
     print("placaControl.read():")
     print(placaControl.read())
 
