@@ -515,11 +515,11 @@ class BoardsTable:
         data_list = []
 
         try:
-            data_to_delete = self.board_name.get_by_id(data)
+            data_to_delete = self.new_board.get_by_id(data)
             data_to_delete.delete_instance()
             print(
                 "peweee_mod: Registros restantes luego de la eliminación: "
-                + str(self.board_name.select().count())
+                + str(self.new_board.select().count())
             )
             data_list.append((OK_CHAR,))  # se convierte en tupla
         except DoesNotExist:
