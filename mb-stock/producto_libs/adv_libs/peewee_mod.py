@@ -542,23 +542,25 @@ if __name__ == "__main__":
     print(str(cont) + " " + 100 * "-" + " " + str(cont))
     cont = cont + 1
 
-    prueba_db.alta()
-    prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
+    # prueba_db.alta()
+    # prueba_db.alta(("MB-RES", 80.8, "Resistencia", "Celcius", "0.123"))
 
     placaDisplay = BoardsTable("placaDisplay")
-    placaDisplay.create(("MB-TR", 2.0))
-    placaDisplay.create(("MB-RES", 5.0))
+    # placaDisplay.create(("MB-TR", 2.0))
+    # placaDisplay.create(("MB-RES", 5.0))
     placaControl = BoardsTable("placaControl")
-    placaControl.create(("MB-RES", 5.0))
-    placaControl.create(("MB-TR", 2.0))
-    placaDisplay.create(("MB-TR", 2.0))
-    placaDisplay.create(("MB-TR", 2.0))
-    placaDisplay.create(("MB-TR", 2.0))
+    # placaControl.create(("MB-RES", 5.0))
+    # placaControl.create(("MB-TR", 2.0))
+    # placaDisplay.create(("MB-TR", 2.0))
+    # placaDisplay.create(("MB-TR", 2.0))
+    # placaDisplay.create(("MB-TR", 2.0))
     print("placaDisplay.read():")
     print(placaDisplay.read())
 
     print("placaControl.read():")
     print(placaControl.read())
+
+    placaControl.delete(1)
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
