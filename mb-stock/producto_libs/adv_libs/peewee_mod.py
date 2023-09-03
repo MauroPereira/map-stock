@@ -376,9 +376,9 @@ class BoardsTable:
     ):
         """
         Método que se encarga de obtener información según un id o nombre de componente
-        específico, de la base de datos. En caso de que el id sea 0, se devuelve toda
-        la información de la tabla en forma de lista. En caso de que el error lanza
-        una expeción y retorna una lista vacía.
+        específico, de la base de datos. Se debe especificar la variable como "id=", en 
+        caso de que el id sea 0, se devuelve toda la información de la tabla en forma 
+        de lista. En caso de que el error lanza una expeción y retorna una lista vacía.
         """
 
         # Modo Peewee Sqlite3
@@ -402,8 +402,11 @@ class BoardsTable:
                 data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
 
         elif component_name == "":
+            print("ACA")
             try:
-                data = self.new_board.get(self.new_board.id == id)
+                print(self.new_board.id == str(id))
+                data = self.new_board.get(self.new_board.id == str(id))
+                print("print data:" + data)
                 data_list.append(
                     (
                         str(data.id),
@@ -554,13 +557,17 @@ if __name__ == "__main__":
     # placaDisplay.create(("MB-TR", 2.0))
     # placaDisplay.create(("MB-TR", 2.0))
     # placaDisplay.create(("MB-TR", 2.0))
-    print("placaDisplay.read():")
-    print(placaDisplay.read())
+    # print("placaDisplay.read():")
+    # print(placaDisplay.read())
 
-    print("placaControl.read():")
-    print(placaControl.read())
+    # print("placaControl.read():")
+    # print(placaControl.read())
 
-    placaControl.delete(1)
+    # placaControl.delete(1)
+
+    print(placaControl.read(id=12))
+    # placaControl.update((12, "Papa",33.33))
+    # print(placaControl.read(id=12))
 
     # se crea la nueva tabla Placa
     # BoardsTable.alta()  # se guarda informacion por defecto
