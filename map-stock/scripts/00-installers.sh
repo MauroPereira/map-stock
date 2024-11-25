@@ -32,9 +32,9 @@ highlighted_green_text "Paquetes necesarios en el SO antes de compilar e instala
 sudo apt install -y build-essential libffi-dev ncurses-dev python3-tk zlib1g-dev libssl-dev python3-virtualenv libsqlite3-dev peewee
 cd Python-3.10.4 && ./configure --enable-optimizations && make && sudo make install
 highlighted_green_text "Creación de entorno virtual..."
-virtualenv -p  $HOME/python/Python-3.10.4/python  $HOME/python/vir_python/py39_mb-stock_env
+virtualenv -p  $HOME/python/Python-3.10.4/python  $HOME/python/vir_python/py39_map-stock_env
 highlighted_green_text "Activa el entorno virtual e instala los paquetes de Python necesarios..."
-source  $HOME/python/vir_python/py39_mb-stock_env/bin/activate
+source  $HOME/python/vir_python/py39_map-stock_env/bin/activate
 python3 -m pip install --upgrade pip
 pip install -U setuptools
 highlighted_green_text "Paquetes necesarios para desarrollo..."
