@@ -9,7 +9,7 @@ CURRENT_DIR=`dirname $SCRIPT`;
 
 highlighted_green_text "Instalador de herramientas de trabajo iniciando en $CURRENT_DIR"
 highlighted_green_text "Descargando e instalando paquetes necesarios..."
-sudo apt update -y && sudo apt install -y git gitk wget tar virtualenv sqlitebrowser python3
+sudo apt update -y && sudo apt install -y git gitk wget tar virtualenv sqlitebrowser python3 python3-tk python3-dev
 highlighted_green_text "Descargando Visual Studio Code e instalandolo..." 
 wget -O "code_amd64.deb" "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
 sudo apt install -y ./code_amd64.deb
