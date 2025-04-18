@@ -541,10 +541,10 @@ if __name__ == "__main__":
     print(" ***** Inicio ****** \n")
 
     prueba_db = PeeweeDb()
-    placaDisplay = BoardsTable("placaDisplay")
-    placaControl = BoardsTable("placaControl")
-    placaControl.create(("MB-RES", 5.0))
-    print(placaControl.read(id=1))
+    placaUno = BoardsTable("placaUno")
+    placaDos = BoardsTable("placaDos")
+    placaDos.create(("MAP-RES", 5.0))
+    print(placaDos.read(id=1))
 
 
     print(" ***** Fin ****** ")
