@@ -262,7 +262,7 @@ class PeeweeDb:
     # @decorador_log
     def alta(
         self,
-        datos: "tupla" = ("MB-TR", 50.2, "Transistor", "Elemon", "0.055"),
+        datos: "tupla" = ("MAP-TR", 50.2, "Transistor", "Elemon", "0.055"),
     ):
         """
         Método que se encarga insertar información en la db.
@@ -335,7 +335,7 @@ class BoardsTable:
 
     def create(
         self,
-        data: "tupla" = ("MB-TR", 0.0),
+        data: "tupla" = ("MAP-TR", 0.0),
     ):
         """
         Método que se encarga insertar información en un tipo de tabla Boards
@@ -351,6 +351,9 @@ class BoardsTable:
         data_list = []
 
         try:
+            # Check if the component exists in the Components table
+            Components.get(Components.name == data[0])
+
             self.connect()
             self.new_board.component_name = data[0]
             self.new_board.quantity = data[1]
@@ -366,6 +369,9 @@ class BoardsTable:
                 data_list.append((OK_CHAR,))  # se convierte en tupla
             else:  # error inesperado
                 data_list.append((NOK_CHAR,))  # se convierte en tupla
+        except Components.DoesNotExist:
+            print(f"Error: Component '{data[0]}' does not exist. Cannot create board")
+            data_list.append((ID_NF_CHAR,))                
         except Exception as error:
             print("Error en peewee desconocido: {0}.".format(error))
             data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
@@ -478,7 +484,7 @@ class BoardsTable:
                 data_list.append((NOK_CHAR,))  # se convierte en tupla
         return conv_lista_de_lista(data_list)
 
-    def update(self, data: "tupla" = (1, "MB-TR", 0.0)):
+    def update(self, data: "tupla" = (1, "MAP-TR", 0.0)):
         """
         Método que se encarga de actualizar información en la db.
         """
@@ -541,10 +547,13 @@ if __name__ == "__main__":
     print(" ***** Inicio ****** \n")
 
     prueba_db = PeeweeDb()
-    placaDisplay = BoardsTable("placaDisplay")
-    placaControl = BoardsTable("placaControl")
-    placaControl.create(("MB-RES", 5.0))
-    print(placaControl.read(id=1))
-
+    placaUno = BoardsTable("placaUno")
+    placaDos = BoardsTable("placaDos")
+    placaDos.create(("MAP-RES", 5.0))
+    print(placaDos.read(id=1))
+    prueba_db.alta(("MAP-RES", 80.8, "Resistencia", "Celcius", "0.123"))
+    placaDos.create(("MAP-RES", 5.0))
+    print(placaDos.read(id=1))
+    print(placaDos.read())
 
     print(" ***** Fin ****** ")
