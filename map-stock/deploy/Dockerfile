@@ -1,5 +1,5 @@
 # Use Alpine as base image with Python 3.9
-FROM python:3.9-alpine
+FROM python:3.13-alpine
 
 # Set working directory
 WORKDIR /app
