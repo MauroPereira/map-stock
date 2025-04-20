@@ -1,29 +1,32 @@
-name: Ejecutar test-db en rama test
+name: Run test-db on test branch
 
 on:
   push:
     branches:
-      - test
+      - deploy
+  workflow_dispatch:
+    inputs:
+      registry_password:
+        description: "Docker Registry Password"
+        required: true
+        type: string
 
 jobs:
-  run-test-db:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar el repo 😘
+      - name: Check out the code
         uses: actions/checkout@v3
 
-      - name: Instalar Python 3.9 🐍
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Instalar dependencias pip 😼
+      - name: Log in to registry
         run: |
-          python -m pip install --upgrade pip
-          pip install -r map-stock/requirements.txt
+          echo "${{ github.event.inputs.registry_password }}" | docker login http://www.map-systems.online -u admin --password-stdin
 
-      - name: Ejecutar test eliminando base de datos 🔥
+      - name: Build and push Docker image
         run: |
-          rm -f map-stock/database/bd.db
-          python3 map-stock/testing/test-00.py
+          docker build -t www.map-systems.online/map-stock:latest -f deploy/Dockerfile .
+          docker push www.map-systems.online/map-stock:latest

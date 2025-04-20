@@ -1,0 +1,15 @@
+# Use Alpine as base image with Python 3.9
+FROM python:3.9-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies required to compile Python packages
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev
+
+# Copy requirements file
+COPY map-stock/requirements.txt ./map-stock/requirements.txt
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -r map-stock/requirements.txt
