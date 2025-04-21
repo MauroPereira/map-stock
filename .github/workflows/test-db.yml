@@ -27,5 +27,5 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t www.map-systems.online/map-stock:latest -f deploy/Dockerfile .
+          docker build -t www.map-systems.online/map-stock:latest -f map-stock/deploy/Dockerfile .
           docker push www.map-systems.online/map-stock:latest
