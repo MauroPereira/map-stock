@@ -8,9 +8,9 @@ WORKDIR /app
 RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev
 
 # Copy requirements file
-COPY map-stock/requirements.txt ./map-stock/requirements.txt
+COPY ../requirements.txt ./requirements.txt
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
-    pip install -r map-stock/requirements.txt
+    pip install -r ./requirements.txt
     
