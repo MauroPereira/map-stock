@@ -8,7 +8,7 @@ WORKDIR /app
 RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev
 
 # Copy requirements file
-COPY ../requirements.txt ./requirements.txt
+COPY requirements.txt ./requirements.txt
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
