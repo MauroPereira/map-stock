@@ -5,7 +5,7 @@ FROM python:3.13-alpine
 WORKDIR /app
 
 # Install system dependencies required to compile Python packages
-RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev sqlite-dev
 
 # Copy requirements file
 COPY requirements.txt ./requirements.txt
