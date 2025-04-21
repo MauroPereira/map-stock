@@ -13,3 +13,4 @@ COPY map-stock/requirements.txt ./map-stock/requirements.txt
 # Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install -r map-stock/requirements.txt
+    
