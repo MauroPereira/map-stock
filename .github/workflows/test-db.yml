@@ -1,4 +1,4 @@
-name: "Run test-db on deploy branch"
+name: "Run test-db on deploy branch "
 
 on:
   workflow_dispatch:
