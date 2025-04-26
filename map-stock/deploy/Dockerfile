@@ -5,11 +5,11 @@ FROM python:3.13-alpine
 WORKDIR /app
 
 # Install system dependencies required to compile Python packages
-RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev sqlite-dev
 
 # Copy requirements file
-COPY map-stock/requirements.txt ./map-stock/requirements.txt
+COPY requirements.txt ./requirements.txt
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
-    pip install -r map-stock/requirements.txt
+    pip install -r ./requirements.txt
