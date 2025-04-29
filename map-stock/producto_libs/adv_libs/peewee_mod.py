@@ -308,236 +308,101 @@ class PeeweeDb:
         except Exception as error:
             print("Error en peewee desconocido: {0}.".format(error))
 
-
 class BoardsTable:
     """
-    Clase que crea una tabla board
+    Class to dynamically create and manage a board table derived from Placas
     """
 
     def __init__(self, board_name):
-        """
-        Método se crea la nueva tabla Placa
-        """
         self.board_name = board_name
         self.connect()
 
     def connect(self):
-        """
-        Crea o conecta si ya existe con la tablas
-        """
         try:
-            # se crea el nuevo tipo y se referencia a NewBoard
-            NewBoard = type(self.board_name, (Placas,), {})
-            mi_base.create_tables([NewBoard])
-            self.new_board = NewBoard()  # necesario
+            self.board_model = type(self.board_name, (Placas,), {})
+            mi_base.create_tables([self.board_model])
         except Exception as error:
-            print("Error al crear nueva tabla Boards: {0}.".format(error))
+            print("Error creating new board table: {0}.".format(error))
 
-    def create(
-        self,
-        data: "tupla" = ("MAP-TR", 0.0),
-    ):
-        """
-        Método que se encarga insertar información en un tipo de tabla Boards
-        """
-
-        # Chequea que el primer parámetro sea una tupla. Esto es necesario
-        # porque en las intrucciones de crud sobre la base de datos se utiliza
-        # formateo de cadenas con tuplas.
+    def create(self, data: "tuple" = ("MAP-TR", 0.0)):
         if type(data) != tuple:
-            raise TypeError("El primer parámetro no es una tupla.")
+            raise TypeError("First argument must be a tuple.")
 
-        # Modo Peewee Sqlite3
         data_list = []
-
         try:
-            # Check if the component exists in the Components table
             Components.get(Components.name == data[0])
-
-            self.connect()
-            self.new_board.component_name = data[0]
-            self.new_board.quantity = data[1]
-            quantity = self.new_board.save()
-
-            if quantity != 0:
-                print(
-                    "peweee_mod: Registros agregados: "
-                    + str(quantity)
-                    + ", tabla db: "
-                    + str(self.board_name)
-                )
-                data_list.append((OK_CHAR,))  # se convierte en tupla
-            else:  # error inesperado
-                data_list.append((NOK_CHAR,))  # se convierte en tupla
+            self.board_model.create(component_name=data[0], quantity=data[1])
+            print(f"peweee_mod: Record added to table {self.board_name}")
+            data_list.append((OK_CHAR,))
         except Components.DoesNotExist:
-            print(f"Error: Component '{data[0]}' does not exist. Cannot create board")
-            data_list.append((ID_NF_CHAR,))                
+            print(f"Error: Component '{data[0]}' does not exist. Cannot create board entry.")
+            data_list.append((ID_NF_CHAR,))
         except Exception as error:
-            print("Error en peewee desconocido: {0}.".format(error))
-            data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
+            print("Unknown peewee error: {0}.".format(error))
+            data_list.append((UNK_ERROR_CHAR,))
         return conv_lista_de_lista(data_list)
 
-    def read(
-        self, component_name: "nombre de componente a leer" = "", id: "id a leer" = 0
-    ):
-        """
-        Método que se encarga de obtener información según un id o nombre de componente
-        específico, de la base de datos. Se debe especificar la variable como "id=", en 
-        caso de que el id sea 0, se devuelve toda la información de la tabla en forma 
-        de lista. En caso de que el error lanza una expeción y retorna una lista vacía.
-        """
-
-        # Modo Peewee Sqlite3
-        print("peweee_mod: Registros consultados por id.")
+    def read(self, component_name: str = "", id: int = 0):
+        print("peweee_mod: Reading records by id or component name.")
         data_list = []
 
-        if id == 0:
-            try:
-                for data in self.new_board.select():
-                    data_list.append(
-                        (
-                            str(data.id),
-                            str(data.component_name),
-                            str(data.quantity),
-                        )
-                    )
-                data_list.append((OK_CHAR,))  # se convierte en tupla
-                print("Registros consultados exitosamente")
-            except Exception as error:
-                print("Error en peewee desconocido: {0}.".format(error))
-                data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
+        try:
+            if id == 0:
+                for data in self.board_model.select():
+                    data_list.append((str(data.id), str(data.component_name), str(data.quantity)))
+                data_list.append((OK_CHAR,))
 
-        elif component_name == "":
-            print("ACA")
-            try:
-                print(self.new_board.id == str(id))
-                data = self.new_board.get(self.new_board.id == id)
-                print("print data:" + str(data))
-                data_list.append(
-                    (
-                        str(data.id),
-                        str(data.component_name),
-                        str(data.quantity),
-                    )
-                )
-                data_list.append((OKD_CHAR,))  # se convierte en tupla
-            except self.new_board.DoesNotExist:
-                print("Error en peewee: No existe el ID")
-                data_list.append(
-                    (
-                        id,
-                        str("NOT FOUND"),
-                        str("NOT FOUND"),
-                        str("0.0"),
-                    )
-                )
-                data_list.append((ID_NF_CHAR,))  # se convierte en tupla
-            except Exception as error:
-                print("Error en peewee desconocido: {0}.".format(error))
-                data_list.append(
-                    (
-                        id,
-                        str("UNKNOWN ERROR"),
-                        str("UNKNOWN ERROR"),
-                        str("0.0"),
-                    )
-                )
-                data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
+            elif component_name == "":
+                data = self.board_model.get(self.board_model.id == id)
+                data_list.append((str(data.id), str(data.component_name), str(data.quantity)))
+                data_list.append((OKD_CHAR,))
 
-        elif id == "":
-            try:
-                data = self.new_board.get(self.new_board.id == id)
-                data_list.append(
-                    (
-                        str(data.id),
-                        str(data.component_name),
-                        str(data.quantity),
-                    )
-                )
-                data_list.append((OKD_CHAR,))  # se convierte en tupla
-            except self.new_board.DoesNotExist:
-                print("Error en peewee: No existe el nombre de componente")
-                data_list.append(
-                    (
-                        id,
-                        str("NOT FOUND"),
-                        str("NOT FOUND"),
-                        str("0.0"),
-                    )
-                )
-                data_list.append((DATA_NF_CHAR,))  # se convierte en tupla
-            except Exception as error:
-                print("Error en peewee desconocido: {0}.".format(error))
-                data_list.append(
-                    (
-                        id,
-                        str("UNKNOWN ERROR"),
-                        str("UNKNOWN ERROR"),
-                        str("0.0"),
-                    )
-                )
-                data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
             else:
-                print(
-                    "ID y Nombre de componente no pueden estar vacíos al mismo tiempo"
-                )
-                data_list.append((NOK_CHAR,))  # se convierte en tupla
+                data = self.board_model.get(self.board_model.component_name == component_name)
+                data_list.append((str(data.id), str(data.component_name), str(data.quantity)))
+                data_list.append((OKD_CHAR,))
+
+        except self.board_model.DoesNotExist:
+            print("Error in peewee: Entry does not exist")
+            data_list.append((id, "NOT FOUND", "NOT FOUND", "0.0"))
+            data_list.append((ID_NF_CHAR if component_name == "" else DATA_NF_CHAR,))
+        except Exception as error:
+            print("Unknown peewee error: {0}.".format(error))
+            data_list.append((id, "UNKNOWN ERROR", "UNKNOWN ERROR", "0.0"))
+            data_list.append((UNK_ERROR_CHAR,))
         return conv_lista_de_lista(data_list)
 
-    def update(self, data: "tupla" = (1, "MAP-TR", 0.0)):
-        """
-        Método que se encarga de actualizar información en la db.
-        """
-
-        # Chequea que el primer parámetro sea una tupla. Esto es necesario
-        # porque en las intrucciones de crud sobre la base de datos se utiliza
-        # formateo de cadenas con tuplas.
+    def update(self, data: "tuple" = (1, "MAP-TR", 0.0)):
         if type(data) != tuple:
-            raise TypeError("El primer parámetro no es una tupla.")
+            raise TypeError("First argument must be a tuple.")
 
-        # Modo Peewee Sqlite3
         data_list = []
-
         try:
-            data_to_update = self.board_name.update(
+            data_to_update = self.board_model.update(
                 component_name=data[1], quantity=data[2]
-            ).where(self.board_name.id == data[0])
+            ).where(self.board_model.id == data[0])
             qty = data_to_update.execute()
-            print("peweee_mod: Registros actualizados: " + str(qty))
-            if qty == 0:
-                print("Error en peewee: No existe el ID")
-                data_list.append((ID_NF_CHAR,))  # se convierte en tupla
-            else:  # no hay error
-                data_list.append((OK_CHAR,))  # se convierte en tupla
+            print(f"peweee_mod: Updated records: {qty}")
+            data_list.append((OK_CHAR,) if qty else (ID_NF_CHAR,))
         except Exception as error:
-            print("Error en peewee desconocido: {0}.".format(error))
-            data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
+            print("Unknown peewee error: {0}.".format(error))
+            data_list.append((UNK_ERROR_CHAR,))
         return conv_lista_de_lista(data_list)
 
-    def delete(self, data: "id a borrar" = 1):
-        """
-        Método que se encarga eliminar información en la db.
-        """
-
-        # Modo Peewee Sqlite3
-        print("peweee_mod: Registro eliminado por id.")
+    def delete(self, data: int = 1):
+        print("peweee_mod: Deleting record by id.")
         data_list = []
-
         try:
-            data_to_delete = self.new_board.get_by_id(data)
+            data_to_delete = self.board_model.get_by_id(data)
             data_to_delete.delete_instance()
-            print(
-                "peweee_mod: Registros restantes luego de la eliminación: "
-                + str(self.new_board.select().count())
-            )
-            data_list.append((OK_CHAR,))  # se convierte en tupla
+            print(f"peweee_mod: Remaining records after deletion: {self.board_model.select().count()}")
+            data_list.append((OK_CHAR,))
         except DoesNotExist:
-            print("Error en peewee: No existe el ID")
-            data_list.append((ID_NF_CHAR,))  # se convierte en tupla
+            print("Error in peewee: ID does not exist")
+            data_list.append((ID_NF_CHAR,))
         except Exception as error:
-            print("Error en peewee desconocido: {0}.".format(error))
-            data_list.append((UNK_ERROR_CHAR,))  # se convierte en tupla
-        print("comm_servidor_mod.py:data_list: {0}".format(data_list))
+            print("Unknown peewee error: {0}.".format(error))
+            data_list.append((UNK_ERROR_CHAR,))
         return conv_lista_de_lista(data_list)
 
 
