@@ -349,17 +349,18 @@ class BoardsTable:
         try:
             if id == 0:
                 for data in self.board_model.select():
-                    data_list.append((str(data.id), str(data.component_name), str(data.quantity)))
+                    # Access the related Components.name using the foreign key
+                    data_list.append((str(data.id), str(data.component_name.name), str(data.quantity)))
                 data_list.append((OK_CHAR,))
 
             elif component_name == "":
                 data = self.board_model.get(self.board_model.id == id)
-                data_list.append((str(data.id), str(data.component_name), str(data.quantity)))
+                data_list.append((str(data.id), str(data.component_name.name), str(data.quantity)))
                 data_list.append((OKD_CHAR,))
 
             else:
                 data = self.board_model.get(self.board_model.component_name == component_name)
-                data_list.append((str(data.id), str(data.component_name), str(data.quantity)))
+                data_list.append((str(data.id), str(data.component_name.name), str(data.quantity)))
                 data_list.append((OKD_CHAR,))
 
         except self.board_model.DoesNotExist:
@@ -404,7 +405,6 @@ class BoardsTable:
             print("Unknown peewee error: {0}.".format(error))
             data_list.append((UNK_ERROR_CHAR,))
         return conv_lista_de_lista(data_list)
-
 
 if __name__ == "__main__":
     pass
