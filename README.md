@@ -1,45 +1,47 @@
 # MAP Stock
 
-## Introducción
-Sistema de stock de equipos electrónicos.
+## Introduction
+Electronic equipment stock system.
 
 ## Python base
 
-### Versión utilizada
-3.10.4
+### Version used
+3.11.0
 
-### Paquetes necesarios en el SO antes de compilar e instalar Python 
+### Required system packages before compiling and installing Python
 <pre><code>sudo apt install -y build-essential libffi-dev ncurses-dev python3-tk zlib1g-dev libssl-dev python3-virtualenv libsqlite3-dev peewee</code></pre>
 
-### Descomprimir
+### Extract
 <pre><code>tar -Jxvf Python-3.10.4.tar.xz</code></pre>
 
-### Instalar
+### Install
 <pre><code>cd Python-3.10.4 && ./configure && make && sudo make install</code></pre>
 
-## Entornos virtuales y configuración final
+## Virtual environments and final configuration
 
-### Creación de entornos virtuales
+### Create virtual environments
 <pre><code>virtualenv -p /home/mauro/python/Python-3.10.4/python /home/mauro/python/vir_python/py39_map-stock_env</code></pre>
 
-### Activar entorno virtual
+### Activate virtual environment
 <pre><code>source /home/mauro/python/vir_python/py39_map-stock_env/bin/activate</code></pre>
 
-### Actualizar Pip3
+### Update Pip3
 <pre><code>python3 -m pip install --upgrade pip</code></pre>
 
-### Actualizar setuptools
+### Update setuptools
 <pre><code>pip install -U setuptools</pre></code>
 
-### Paquetes necesarios para desarrollo
+### Required development packages
 <pre><code>pip3 install -r ~/repos/map/map-stock/map-stock/requirements_dev.txt</code></pre>
 
-### Paquetes necesarios para producción
+### Required production packages
 <pre><code>pip3 install -r ~/repos/map/map-stock/map-stock/requirements.txt</code></pre>
 
-### Desactivar entorno virtual
+### Deactivate virtual environment
 <pre><code>deactivate</code></pre>
 
-## Versiones
+## Versions
 * stock-mb_v0.1
-  Permite agregar y borrar Productos por el cliente/servidor. Funciona la parte gráfica.
+  Allows adding and deleting Products by client/server. GUI functionality works.
+* v3.11.0 
+  Allows creating boards groups.
