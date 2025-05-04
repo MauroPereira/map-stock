@@ -184,7 +184,7 @@ if __name__ == "__main__":
 
     # Se pide información de un producto en específicoq
     envio_producto.load_data_int(READ_ID_CHAR)  # "<"
-    envio_producto.load_data_str("50")  # ID 3
+    envio_producto.load_data_str("1")  # ID 3
     envio_producto.send_and_receive_data()
     envio_producto.print_received_data()
     envio_producto.check_received_data()
