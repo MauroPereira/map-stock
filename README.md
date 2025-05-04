@@ -6,7 +6,7 @@ Electronic equipment stock system.
 ## Python base
 
 ### Version used
-3.10.4
+3.11.0
 
 ### Required system packages before compiling and installing Python
 <pre><code>sudo apt install -y build-essential libffi-dev ncurses-dev python3-tk zlib1g-dev libssl-dev python3-virtualenv libsqlite3-dev peewee</code></pre>
@@ -43,3 +43,5 @@ Electronic equipment stock system.
 ## Versions
 * stock-mb_v0.1
   Allows adding and deleting Products by client/server. GUI functionality works.
+* v3.11.0 
+  Allows creating boards groups.
