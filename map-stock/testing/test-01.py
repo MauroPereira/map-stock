@@ -4,6 +4,10 @@ import time
 import sys
 import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from producto_libs.comm_cliente_mod import CommCliente
+from producto_libs.common_libs.char_cons_crud import READ_ID_CHAR
+
 def run_script(script_path):
     try:
         # Get the absolute path of the script
@@ -18,49 +22,34 @@ def run_script(script_path):
         print(f"Error executing {script_path}: {str(e)}")
         sys.exit(1)
 
-def main():
-    # First run the server
+def run_server():
+    # Start the server without blocking execution
     server_process = run_script('producto_libs/comm_servidor_mod.py')
-    
-    # Wait a moment to ensure server is up
-    time.sleep(2)
-    
-    # Then run the client
-    client_process = run_script('producto_libs/comm_cliente_mod.py')
-    
-    try:
-        # Wait for both processes to complete
-        server_process.wait()
-        client_process.wait()
-    except KeyboardInterrupt:
-        print("\nStopping processes...")
-        server_process.terminate()
-        client_process.terminate()
-        server_process.wait()
-        client_process.wait()
+    time.sleep(2)  # Give the server a moment to start up 
+    return server_process
+
+
 
 if __name__ == "__main__":
-    
+    print(" ***** Start ****** \n")
+
+    # Start the server in the background
+    server_process = run_server()
+
+    # Create the client
     envio_producto = CommCliente()
 
-    """
-    # Carga de producto
-    envio_producto.load_data_int(CREATE_CHAR)
-    envio_producto.load_data_str("Tomate")
-    envio_producto.load_data_str("Vanesa")
-    envio_producto.load_data_str("10.22")
+    # --- Client logic ---
+    envio_producto.load_data_int(READ_ID_CHAR)  # Request by ID
+    envio_producto.load_data_str("1")  # ID 1
     envio_producto.send_and_receive_data()
     envio_producto.print_received_data()
     envio_producto.check_received_data()
     envio_producto.erase_sent_and_received_data()
-    """
-
-    # Se pide información de un producto en específicoq
-    envio_producto.load_data_int(READ_ID_CHAR)  # "<"
-    envio_producto.load_data_str("1")  # ID 3
-    envio_producto.send_and_receive_data()
-    envio_producto.print_received_data()
-    envio_producto.check_received_data()
-    envio_producto.erase_sent_and_received_data()
-
     envio_producto.close_conection()
+
+    # Optionally terminate the server process at the end
+    server_process.terminate()
+    server_process.wait()
+
+    print("\n ***** End ****** \n")

@@ -1,7 +1,7 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from producto_libs.adv_libs.peewee_mod import PeeweeDb, BoardsTable
 
 if __name__ == "__main__":
