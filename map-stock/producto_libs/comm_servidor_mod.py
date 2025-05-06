@@ -32,7 +32,8 @@ print("Name in comm_servidor_mod.py:" + str(__name__))
 
 if __name__ == "__main__":
     from adv_libs.peewee_mod import PeeweeDb
-
+elif __name__ == "producto_libs.comm_servidor_mod":
+    from producto_libs.adv_libs.peewee_mod import PeeweeDb
 
 class Desempaquetar:
     """
