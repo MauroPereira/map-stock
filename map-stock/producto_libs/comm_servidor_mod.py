@@ -2,18 +2,30 @@ import socket
 import errno
 import time
 from yaspin import yaspin
-from common_libs.print_colors import bcolors
-from common_libs.keyboard_pressed import key_pressed
-from common_libs.char_cons_crud import CREATE_CHAR
-from common_libs.char_cons_crud import READ_ID_CHAR
-from common_libs.char_cons_crud import READ_LST_CHAR
-from common_libs.char_cons_crud import UPDATE_CHAR
-from common_libs.char_cons_crud import DELETE_CHAR
-from common_libs.char_cons_crud import NOK_CHAR
-from common_libs.convert_data_types import convert_list_of_lists_to_simple_list
-from common_libs.print_colors import print_colour
 
+if __name__ == "__main__":
+    from common_libs.print_colors import bcolors
+    from common_libs.keyboard_pressed import key_pressed
+    from common_libs.char_cons_crud import CREATE_CHAR
+    from common_libs.char_cons_crud import READ_ID_CHAR
+    from common_libs.char_cons_crud import READ_LST_CHAR
+    from common_libs.char_cons_crud import UPDATE_CHAR
+    from common_libs.char_cons_crud import DELETE_CHAR
+    from common_libs.char_cons_crud import NOK_CHAR
+    from common_libs.convert_data_types import convert_list_of_lists_to_simple_list
+    from common_libs.print_colors import print_colour
 
+elif __name__ == "producto_libs.comm_servidor_mod":
+    from producto_libs.common_libs.print_colors import bcolors
+    from producto_libs.common_libs.keyboard_pressed import key_pressed
+    from producto_libs.common_libs.char_cons_crud import CREATE_CHAR
+    from producto_libs.common_libs.char_cons_crud import READ_ID_CHAR
+    from producto_libs.common_libs.char_cons_crud import READ_LST_CHAR
+    from producto_libs.common_libs.char_cons_crud import UPDATE_CHAR
+    from producto_libs.common_libs.char_cons_crud import DELETE_CHAR
+    from producto_libs.common_libs.convert_data_types import convert_list_of_lists_to_simple_list
+    from producto_libs.common_libs.print_colors import print_colour     
+    
 spinner = yaspin(text="Intentando conectar... presione q para salir.")
 
 print("Name in comm_servidor_mod.py:" + str(__name__))
