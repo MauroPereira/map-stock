@@ -5,12 +5,6 @@ on:
     branches:
       - main # o master, dependiendo de tu rama principal
 
-# Agregar permisos explícitos
-permissions:
-  contents: read
-  issues: write
-  projects: write
-
 jobs:
   manage-tasks:
     runs-on: ubuntu-latest
@@ -23,7 +17,7 @@ jobs:
       - name: Process commits
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
           script: |
             const commits = context.payload.commits;
             const projectNumber = 8; // Reemplaza con el número de tu proyecto
@@ -37,31 +31,44 @@ jobs:
 
             for (const commit of commits) {
               const message = commit.message.toLowerCase();
+              console.log(`Processing commit: ${message}`);
               
               // Buscar palabras clave en el mensaje
               for (const [keyword, columnName] of Object.entries(columnMap)) {
                 if (message.includes(keyword)) {
+                  console.log(`Found keyword: ${keyword}`);
                   // Buscar el número de issue en el mensaje
                   const issueMatch = message.match(/#(\d+)/);
                   if (issueMatch) {
                     const issueNumber = issueMatch[1];
+                    console.log(`Found issue number: ${issueNumber}`);
                     
-                    // Obtener el ID de la columna
-                    const columns = await github.rest.projects.listColumns({
-                      project_id: projectNumber
-                    });
-                    
-                    const targetColumn = columns.data.find(col => col.name === columnName);
-                    if (targetColumn) {
-                      // Mover la issue a la columna correspondiente
-                      await github.rest.projects.createCard({
-                        column_id: targetColumn.id,
-                        content_id: issueNumber,
-                        content_type: 'Issue'
+                    try {
+                      // Obtener el ID de la columna
+                      const columns = await github.rest.projects.listColumns({
+                        project_id: projectNumber
                       });
+                      console.log(`Found columns: ${JSON.stringify(columns.data.map(c => c.name))}`);
                       
-                      console.log(`Moved issue #${issueNumber} to ${columnName}`);
+                      const targetColumn = columns.data.find(col => col.name === columnName);
+                      if (targetColumn) {
+                        console.log(`Found target column: ${columnName}`);
+                        // Mover la issue a la columna correspondiente
+                        await github.rest.projects.createCard({
+                          column_id: targetColumn.id,
+                          content_id: issueNumber,
+                          content_type: 'Issue'
+                        });
+                        
+                        console.log(`Successfully moved issue #${issueNumber} to ${columnName}`);
+                      } else {
+                        console.log(`Column ${columnName} not found`);
+                      }
+                    } catch (error) {
+                      console.error(`Error processing issue #${issueNumber}:`, error);
                     }
+                  } else {
+                    console.log('No issue number found in commit message');
                   }
                 }
               }
