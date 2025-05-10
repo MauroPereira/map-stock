@@ -3,7 +3,7 @@ name: Auto Task Management
 on:
   push:
     branches:
-      - main # o master, dependiendo de tu rama principal
+      - stable
 
 jobs:
   manage-tasks:
