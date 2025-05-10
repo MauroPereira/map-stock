@@ -1,0 +1,62 @@
+name: Auto Task Management
+
+on:
+  push:
+    branches:
+      - main # o master, dependiendo de tu rama principal
+
+jobs:
+  manage-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Process commits
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commits = context.payload.commits;
+            const projectNumber = 8; // Reemplaza con el número de tu proyecto
+            const columnMap = {
+              '#backlog': 'Backlog',
+              '#ready': 'Ready',
+              '#in-progress': 'In Progress',
+              '#review': 'In Review',
+              '#done': 'Done'
+            };
+
+            for (const commit of commits) {
+              const message = commit.message.toLowerCase();
+              
+              // Buscar palabras clave en el mensaje
+              for (const [keyword, columnName] of Object.entries(columnMap)) {
+                if (message.includes(keyword)) {
+                  // Buscar el número de issue en el mensaje
+                  const issueMatch = message.match(/#(\d+)/);
+                  if (issueMatch) {
+                    const issueNumber = issueMatch[1];
+                    
+                    // Obtener el ID de la columna
+                    const columns = await github.rest.projects.listColumns({
+                      project_id: projectNumber
+                    });
+                    
+                    const targetColumn = columns.data.find(col => col.name === columnName);
+                    if (targetColumn) {
+                      // Mover la issue a la columna correspondiente
+                      await github.rest.projects.createCard({
+                        column_id: targetColumn.id,
+                        content_id: issueNumber,
+                        content_type: 'Issue'
+                      });
+                      
+                      console.log(`Moved issue #${issueNumber} to ${columnName}`);
+                    }
+                  }
+                }
+              }
+            }
