@@ -5,6 +5,12 @@ on:
     branches:
       - main # o master, dependiendo de tu rama principal
 
+# Agregar permisos explícitos
+permissions:
+  contents: read
+  issues: write
+  projects: write
+
 jobs:
   manage-tasks:
     runs-on: ubuntu-latest
