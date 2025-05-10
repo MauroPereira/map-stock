@@ -10,3 +10,6 @@ pysqlite3
 virtualenv
 peewee
 yaspin
+gql
+aiohttp
+python-dotenv
