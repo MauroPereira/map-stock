@@ -2,9 +2,8 @@
 
 echo "Ejecutando pre-commit hook..."
 
-# Obtener el mensaje del commit
-commit_msg_file=$1
-commit_msg=$(cat "$commit_msg_file")
+# Obtener el mensaje del commit directamente de los argumentos
+commit_msg="$*"
 
 echo "Mensaje del commit: $commit_msg"
 
