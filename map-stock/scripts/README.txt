@@ -56,6 +56,8 @@ To set up the hook:
    git commit -m "Implement new feature #in-progress"
    ```
 
+Important Note: The hook will only run if there are actual changes to commit. If you try to commit without any changes (git add + git commit), the hook won't execute and no issue will be created or moved.
+
 The hook will automatically:
 - Read the commit message
 - Detect keywords (#backlog, #ready, #in-progress, #review, #done)
