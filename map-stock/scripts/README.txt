@@ -17,11 +17,15 @@ Usage
    ```bash
    python3 github_project_automation.py "Implement new feature #in-progress"
    ```
+   Note: The text before the keyword will be used as the issue title exactly as written.
 
 2. Move an existing issue:
    ```bash
    python3 github_project_automation.py "Update documentation #done #123"
    ```
+   Note: When moving an existing issue, only the issue number and keyword matter. The text before the keyword is ignored.
+   This allows you to use the commit message to describe why the issue is being moved, without affecting the issue title.
+   Example: "Fixed all bugs and completed testing, ready for production #done #123"
 
 Examples
 --------
@@ -38,6 +42,11 @@ Examples
 3. Create an issue and move it to "Backlog":
    ```bash
    python3 github_project_automation.py "New feature idea #backlog"
+   ```
+
+4. Move an issue with descriptive commit message:
+   ```bash
+   python3 github_project_automation.py "Completed all requirements, added unit tests, and documented the changes #done #789"
    ```
 
 Git Hook Setup
