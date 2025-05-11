@@ -2,8 +2,8 @@
 
 echo "Ejecutando pre-commit hook..."
 
-# Obtener el mensaje del commit directamente de los argumentos
-commit_msg="$*"
+# Obtener el mensaje del commit del archivo COMMIT_EDITMSG
+commit_msg=$(cat .git/COMMIT_EDITMSG)
 
 echo "Mensaje del commit: $commit_msg"
 
