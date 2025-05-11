@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Obtener el mensaje del commit
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# Verificar si el mensaje contiene una palabra clave
+if [[ "$commit_msg" =~ (#backlog|#ready|#in-progress|#review|#done) ]]; then
+    # Ejecutar el script de automatización
+    python3 map-stock/scripts/github_project_automation.py "$commit_msg"
+fi
+
+# Permitir que el commit continúe
+exit 0 
