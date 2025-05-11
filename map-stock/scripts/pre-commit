@@ -10,8 +10,8 @@ echo "Mensaje del commit: $commit_msg"
 # Verificar si el mensaje contiene una palabra clave
 if [[ "$commit_msg" =~ (#backlog|#ready|#in-progress|#review|#done) ]]; then
     echo "Palabra clave encontrada, ejecutando script de automatización..."
-    # Ejecutar el script de automatización usando la ruta relativa
-    python3 "$(dirname "$0")/github_project_automation.py" "$commit_msg"
+    # Ejecutar el script de automatización usando la ruta correcta
+    python3 "$(git rev-parse --show-toplevel)/map-stock/scripts/github_project_automation.py" "$commit_msg"
 else
     echo "No se encontró ninguna palabra clave en el mensaje"
 fi
