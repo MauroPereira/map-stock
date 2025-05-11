@@ -1,13 +1,20 @@
 #!/bin/bash
 
+echo "Ejecutando pre-commit hook..."
+
 # Obtener el mensaje del commit
 commit_msg_file=$1
 commit_msg=$(cat "$commit_msg_file")
 
+echo "Mensaje del commit: $commit_msg"
+
 # Verificar si el mensaje contiene una palabra clave
 if [[ "$commit_msg" =~ (#backlog|#ready|#in-progress|#review|#done) ]]; then
-    # Ejecutar el script de automatización
-    python3 map-stock/scripts/github_project_automation.py "$commit_msg"
+    echo "Palabra clave encontrada, ejecutando script de automatización..."
+    # Ejecutar el script de automatización usando la ruta relativa
+    python3 "$(dirname "$0")/github_project_automation.py" "$commit_msg"
+else
+    echo "No se encontró ninguna palabra clave en el mensaje"
 fi
 
 # Permitir que el commit continúe
