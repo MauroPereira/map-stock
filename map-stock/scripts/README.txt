@@ -1,48 +1,48 @@
 GitHub Projects Automation
 =========================
 
-Este script permite automatizar la gestión de issues en GitHub Projects, permitiendo crear nuevas issues y moverlas entre columnas usando palabras clave en los mensajes de commit.
+This script automates GitHub Projects issue management, allowing you to create new issues and move them between columns using keywords in commit messages.
 
-Palabras Clave
--------------
-- #backlog  -> Mueve la issue a la columna "Backlog"
-- #ready    -> Mueve la issue a la columna "Ready"
-- #in-progress -> Mueve la issue a la columna "In progress"
-- #review   -> Mueve la issue a la columna "In review"
-- #done     -> Mueve la issue a la columna "Done"
-
-Uso
----
-1. Crear una nueva issue:
-   ```bash
-   python3 github_project_automation.py "Implementar nueva funcionalidad #in-progress"
-   ```
-
-2. Mover una issue existente:
-   ```bash
-   python3 github_project_automation.py "Actualización de documentación #done #123"
-   ```
-
-Ejemplos
+Keywords
 --------
-1. Crear una nueva issue y moverla a "In progress":
-   ```bash
-   python3 github_project_automation.py "Implementar sistema de autenticación #in-progress"
-   ```
+- #backlog  -> Moves the issue to "Backlog" column
+- #ready    -> Moves the issue to "Ready" column
+- #in-progress -> Moves the issue to "In progress" column
+- #review   -> Moves the issue to "In review" column
+- #done     -> Moves the issue to "Done" column
 
-2. Mover una issue existente a "Done":
-   ```bash
-   python3 github_project_automation.py "Completar tarea #done #456"
-   ```
-
-3. Crear una issue y moverla a "Backlog":
-   ```bash
-   python3 github_project_automation.py "Nueva idea para implementar #backlog"
-   ```
-
-Notas
+Usage
 -----
-- El script requiere un token de GitHub con permisos para gestionar issues y proyectos
-- El token debe estar configurado en el archivo .env
-- Las columnas deben existir en el proyecto de GitHub
-- El número del proyecto debe estar configurado en el script 
+1. Create a new issue:
+   ```bash
+   python3 github_project_automation.py "Implement new feature #in-progress"
+   ```
+
+2. Move an existing issue:
+   ```bash
+   python3 github_project_automation.py "Update documentation #done #123"
+   ```
+
+Examples
+--------
+1. Create a new issue and move it to "In progress":
+   ```bash
+   python3 github_project_automation.py "Implement authentication system #in-progress"
+   ```
+
+2. Move an existing issue to "Done":
+   ```bash
+   python3 github_project_automation.py "Complete task #done #456"
+   ```
+
+3. Create an issue and move it to "Backlog":
+   ```bash
+   python3 github_project_automation.py "New feature idea #backlog"
+   ```
+
+Notes
+-----
+- The script requires a GitHub token with permissions to manage issues and projects
+- The token must be configured in the .env file
+- The columns must exist in your GitHub project
+- The project number must be configured in the script 

@@ -1,20 +1,30 @@
 #!/bin/bash
 
-echo "Ejecutando pre-commit hook..."
+# Pre-commit hook to automate GitHub Projects issue management
+# This script runs automatically before each commit
+# Detects keywords in commit messages and creates/moves issues on the board
 
-# Obtener el mensaje del commit del archivo COMMIT_EDITMSG
+echo "Running pre-commit hook..."
+
+# Get commit message from COMMIT_EDITMSG file
 commit_msg=$(cat .git/COMMIT_EDITMSG)
 
-echo "Mensaje del commit: $commit_msg"
+echo "Commit message: $commit_msg"
 
-# Verificar si el mensaje contiene una palabra clave
+# Check if message contains a keyword
+# Available keywords:
+# - #backlog    -> Moves to "Backlog"
+# - #ready      -> Moves to "Ready"
+# - #in-progress -> Moves to "In progress"
+# - #review     -> Moves to "In review"
+# - #done       -> Moves to "Done"
 if [[ "$commit_msg" =~ (#backlog|#ready|#in-progress|#review|#done) ]]; then
-    echo "Palabra clave encontrada, ejecutando script de automatización..."
-    # Ejecutar el script de automatización usando la ruta correcta
+    echo "Keyword found, running automation script..."
+    # Run automation script using correct path
     python3 "$(git rev-parse --show-toplevel)/map-stock/scripts/github_project_automation.py" "$commit_msg"
 else
-    echo "No se encontró ninguna palabra clave en el mensaje"
+    echo "No keyword found in message"
 fi
 
-# Permitir que el commit continúe
+# Allow commit to continue
 exit 0 
