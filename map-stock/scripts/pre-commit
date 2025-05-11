@@ -6,8 +6,8 @@
 
 echo "Running pre-commit hook..."
 
-# Get commit message from command line arguments
-commit_msg="$*"
+# Get commit message from COMMIT_EDITMSG file
+commit_msg=$(cat .git/COMMIT_EDITMSG)
 
 echo "Commit message: $commit_msg"
 
