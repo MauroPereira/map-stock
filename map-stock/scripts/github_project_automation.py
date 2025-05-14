@@ -26,10 +26,24 @@ COLUMN_MAP = {
     '#done': 'Done'
 }
 
+# Mapeo de palabras clave a campos adicionales
+FIELD_MAP = {
+    'priority': {
+        'field_name': 'Priority',
+        'values': ['P0', 'P1', 'P2']
+    },
+    'size': {
+        'field_name': 'Size',
+        'values': ['XS', 'S', 'M', 'L', 'XL']
+    }
+}
+
 class GitHubProjectAutomation:
     def __init__(self):
         if not GITHUB_TOKEN:
             raise ValueError("GITHUB_TOKEN no encontrado en las variables de entorno")
+        
+        self.debug_mode = False  # Agregar flag para modo debug
         
         print(f"Configurando cliente GraphQL con:")
         print(f"- Repositorio: {REPO_OWNER}/{REPO_NAME}")
@@ -44,6 +58,15 @@ class GitHubProjectAutomation:
         )
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
         self.repository_id = None
+
+    def set_debug_mode(self, message: str) -> None:
+        """Activa o desactiva el modo debug basado en el mensaje"""
+        self.debug_mode = "#debug-hook" in message.lower()
+
+    def debug_print(self, message: str) -> None:
+        """Imprime mensajes solo si no estamos en modo debug"""
+        if not self.debug_mode:
+            print(message)
 
     async def verify_connection(self) -> None:
         """Verifica la conexión con GitHub y los permisos del token"""
@@ -353,6 +376,232 @@ class GitHubProjectAutomation:
                 return keyword
         return None
 
+    def find_field_values(self, message: str) -> Dict[str, str]:
+        """Encuentra los valores de los campos en el mensaje del commit"""
+        field_values = {}
+        
+        # Buscar valores de campos con formato #campo:valor
+        for field, config in FIELD_MAP.items():
+            pattern = f"#{field}:([A-Za-z0-9]+)"
+            match = re.search(pattern, message, re.IGNORECASE)
+            if match:
+                value = match.group(1).upper()
+                if value in config['values']:
+                    field_values[field] = value
+        
+        # Buscar fechas con formato #start:YYYY-MM-DD o #end:YYYY-MM-DD
+        date_patterns = {
+            'start': r"#start:(\d{4}-\d{2}-\d{2})",
+            'end': r"#end:(\d{4}-\d{2}-\d{2})"
+        }
+        
+        for field, pattern in date_patterns.items():
+            match = re.search(pattern, message)
+            if match:
+                field_values[field] = match.group(1)
+        
+        # Buscar estimación con formato #estimate:N
+        estimate_match = re.search(r"#estimate:(\d+)", message)
+        if estimate_match:
+            field_values['estimate'] = estimate_match.group(1)
+        
+        return field_values
+
+    async def update_issue_fields(self, issue_number: str, field_values: Dict[str, str]) -> None:
+        """Actualiza los campos adicionales de una issue"""
+        if not field_values:
+            return
+        
+        # Obtener información del proyecto y sus campos
+        query = gql("""
+            query($owner: String!, $repo: String!, $projectNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                    projectV2(number: $projectNumber) {
+                        id
+                        fields(first: 20) {
+                            nodes {
+                                ... on ProjectV2Field {
+                                    id
+                                    name
+                                }
+                                ... on ProjectV2SingleSelectField {
+                                    id
+                                    name
+                                    options {
+                                        id
+                                        name
+                                    }
+                                }
+                                ... on ProjectV2IterationField {
+                                    id
+                                    name
+                                }
+                                ... on ProjectV2NumberField {
+                                    id
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """)
+        
+        variables = {
+            "owner": REPO_OWNER,
+            "repo": REPO_NAME,
+            "projectNumber": PROJECT_NUMBER
+        }
+        
+        result = await self.client.execute_async(query, variable_values=variables)
+        project = result['repository']['projectV2']
+        
+        # Obtener el ID del item del proyecto
+        get_item_query = gql("""
+            query($owner: String!, $repo: String!, $projectNumber: Int!, $issueNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                    projectV2(number: $projectNumber) {
+                        items(first: 100) {
+                            nodes {
+                                id
+                                content {
+                                    ... on Issue {
+                                        number
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """)
+        
+        get_item_variables = {
+            "owner": REPO_OWNER,
+            "repo": REPO_NAME,
+            "projectNumber": PROJECT_NUMBER,
+            "issueNumber": int(issue_number)
+        }
+        
+        get_item_result = await self.client.execute_async(get_item_query, variable_values=get_item_variables)
+        project_item_id = None
+        
+        for item in get_item_result['repository']['projectV2']['items']['nodes']:
+            if item['content']['number'] == int(issue_number):
+                project_item_id = item['id']
+                break
+        
+        if not project_item_id:
+            raise ValueError(f"No se pudo encontrar la issue #{issue_number} en el proyecto")
+        
+        # Actualizar cada campo
+        for field_name, field_value in field_values.items():
+            field_id = None
+            field_type = None
+            
+            # Buscar el campo en el proyecto
+            for field in project['fields']['nodes']:
+                if field['name'] == FIELD_MAP.get(field_name, {}).get('field_name', field_name):
+                    field_id = field['id']
+                    if 'options' in field:
+                        field_type = 'singleSelect'
+                    elif field_name in ['start', 'end']:
+                        field_type = 'date'
+                    elif field_name == 'estimate':
+                        field_type = 'number'
+                    break
+            
+            if not field_id:
+                print(f"Campo {field_name} no encontrado en el proyecto")
+                continue
+            
+            # Preparar la mutación según el tipo de campo
+            if field_type == 'singleSelect':
+                # Buscar el ID de la opción
+                option_id = None
+                for field in project['fields']['nodes']:
+                    if field['id'] == field_id:
+                        for option in field['options']:
+                            if option['name'] == field_value:
+                                option_id = option['id']
+                                break
+                        break
+                
+                if not option_id:
+                    print(f"Opción {field_value} no encontrada para el campo {field_name}")
+                    continue
+                
+                mutation = gql("""
+                    mutation($input: UpdateProjectV2ItemFieldValueInput!) {
+                        updateProjectV2ItemFieldValue(input: $input) {
+                            projectV2Item {
+                                id
+                            }
+                        }
+                    }
+                """)
+                
+                variables = {
+                    "input": {
+                        "projectId": project['id'],
+                        "itemId": project_item_id,
+                        "fieldId": field_id,
+                        "value": {
+                            "singleSelectOptionId": option_id
+                        }
+                    }
+                }
+            
+            elif field_type == 'date':
+                mutation = gql("""
+                    mutation($input: UpdateProjectV2ItemFieldValueInput!) {
+                        updateProjectV2ItemFieldValue(input: $input) {
+                            projectV2Item {
+                                id
+                            }
+                        }
+                    }
+                """)
+                
+                variables = {
+                    "input": {
+                        "projectId": project['id'],
+                        "itemId": project_item_id,
+                        "fieldId": field_id,
+                        "value": {
+                            "date": field_value
+                        }
+                    }
+                }
+            
+            elif field_type == 'number':
+                mutation = gql("""
+                    mutation($input: UpdateProjectV2ItemFieldValueInput!) {
+                        updateProjectV2ItemFieldValue(input: $input) {
+                            projectV2Item {
+                                id
+                            }
+                        }
+                    }
+                """)
+                
+                variables = {
+                    "input": {
+                        "projectId": project['id'],
+                        "itemId": project_item_id,
+                        "fieldId": field_id,
+                        "value": {
+                            "number": float(field_value)
+                        }
+                    }
+                }
+            
+            try:
+                await self.client.execute_async(mutation, variable_values=variables)
+                print(f"Campo {field_name} actualizado a {field_value}")
+            except Exception as e:
+                print(f"Error al actualizar el campo {field_name}: {str(e)}")
+
     async def create_issue(self, title: str, body: str = "") -> str:
         """Crea una nueva issue en el repositorio"""
         mutation = gql("""
@@ -408,6 +657,9 @@ async def process_commit_message(message: str) -> None:
     """Procesa un mensaje de commit y mueve la issue si es necesario"""
     automation = GitHubProjectAutomation()
     
+    # Configurar modo debug
+    automation.set_debug_mode(message)
+    
     # Verificar conexión
     await automation.verify_connection()
     
@@ -422,15 +674,16 @@ async def process_commit_message(message: str) -> None:
     project = project_info['repository']['projectV2']
     
     if not project:
-        print(f"No se encontró el proyecto #{PROJECT_NUMBER}")
+        automation.debug_print(f"No se encontró el proyecto #{PROJECT_NUMBER}")
         return
     
-    # Extraer número de issue y palabra clave
+    # Extraer número de issue, palabra clave y valores de campos
     issue_number = automation.extract_issue_number(message)
     keyword = automation.find_keyword(message)
+    field_values = automation.find_field_values(message)
     
-    if not keyword:
-        print("No se encontró palabra clave en el mensaje")
+    if not keyword and not field_values:
+        automation.debug_print("No se encontró palabra clave ni campos para actualizar en el mensaje")
         return
     
     try:
@@ -440,16 +693,22 @@ async def process_commit_message(message: str) -> None:
             result = await automation.create_issue(title)
             # Extraer el número de la issue del resultado
             issue_number = result.split('#')[1].split()[0]  # Obtener el número después del #
-            print(f"Usando issue #{issue_number}")
+            automation.debug_print(f"Usando issue #{issue_number}")
         else:
             # Verificar si la issue existe
             await automation.get_issue_node_id(issue_number)
         
-        # Mover la issue
-        await automation.move_issue_to_column(issue_number, COLUMN_MAP[keyword])
-        print(f"Issue #{issue_number} movida a {COLUMN_MAP[keyword]}")
+        # Mover la issue si hay palabra clave
+        if keyword:
+            await automation.move_issue_to_column(issue_number, COLUMN_MAP[keyword])
+            print(f"Issue #{issue_number} movida a {COLUMN_MAP[keyword]}")
+        
+        # Actualizar campos adicionales si hay valores
+        if field_values:
+            await automation.update_issue_fields(issue_number, field_values)
+            
     except Exception as e:
-        print(f"Error al procesar la issue: {str(e)}")
+        automation.debug_print(f"Error al procesar la issue: {str(e)}")
 
 if __name__ == "__main__":
     import asyncio

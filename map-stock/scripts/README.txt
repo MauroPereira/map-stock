@@ -11,11 +11,25 @@ Keywords
 - #review   -> Moves the issue to "In review" column
 - #done     -> Moves the issue to "Done" column
 
+Additional Fields
+---------------
+You can also set other project fields using keywords in the commit message:
+
+- Priority: #priority:P0, #priority:P1, #priority:P2
+- Size: #size:XS, #size:S, #size:M, #size:L, #size:XL
+- Estimate: #estimate:N (where N is a number)
+- Start date: #start:YYYY-MM-DD
+- End date: #end:YYYY-MM-DD
+
+Debug Mode
+---------
+Add #debug-hook to your commit message to see detailed output about what the script is doing. Without this keyword, the script will only show the final result (e.g., "Issue #20 movida a Done").
+
 Usage
 -----
 1. Create a new issue:
    ```bash
-   python3 github_project_automation.py "Implement new feature #in-progress"
+   python3 github_project_automation.py "Implement new feature #in-progress #priority:P0 #size:M"
    ```
    Note: The text before the keyword will be used as the issue title exactly as written.
 
@@ -26,6 +40,16 @@ Usage
    Note: When moving an existing issue, only the issue number and keyword matter. The text before the keyword is ignored.
    This allows you to use the commit message to describe why the issue is being moved, without affecting the issue title.
    Example: "Fixed all bugs and completed testing, ready for production #done #123"
+
+3. Update issue fields:
+   ```bash
+   python3 github_project_automation.py "Update issue fields #123 #priority:P1 #size:L #estimate:3 #start:2024-03-20 #end:2024-03-25"
+   ```
+
+4. Debug mode:
+   ```bash
+   python3 github_project_automation.py "Update issue #done #123 #debug-hook"
+   ```
 
 Examples
 --------
@@ -47,6 +71,16 @@ Examples
 4. Move an issue with descriptive commit message:
    ```bash
    python3 github_project_automation.py "Completed all requirements, added unit tests, and documented the changes #done #789"
+   ```
+
+5. Create an issue with all fields:
+   ```bash
+   python3 github_project_automation.py "Implement new feature #in-progress #priority:P0 #size:M #estimate:2 #start:2024-03-20 #end:2024-03-25"
+   ```
+
+6. Debug mode example:
+   ```bash
+   python3 github_project_automation.py "Update issue with debug info #done #123 #priority:P1 #debug-hook"
    ```
 
 Git Hook Setup
@@ -71,6 +105,7 @@ The hook will automatically:
 - Read the commit message
 - Detect keywords (#backlog, #ready, #in-progress, #review, #done)
 - Create a new issue or move an existing one to the corresponding column
+- Update any additional fields specified in the commit message
 
 Notes
 -----
