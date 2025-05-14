@@ -45,11 +45,6 @@ class GitHubProjectAutomation:
         
         self.debug_mode = False  # Agregar flag para modo debug
         
-        print(f"Configurando cliente GraphQL con:")
-        print(f"- Repositorio: {REPO_OWNER}/{REPO_NAME}")
-        print(f"- Número de proyecto: {PROJECT_NUMBER}")
-        print(f"- Token (primeros 4 caracteres): {GITHUB_TOKEN[:4]}...")
-        
         # Configurar el cliente GraphQL
         transport = AIOHTTPTransport(
             url='https://api.github.com/graphql',
@@ -81,11 +76,9 @@ class GitHubProjectAutomation:
         
         try:
             result = await self.client.execute_async(query)
-            self.debug_print("\nConexión exitosa con GitHub:")
-            self.debug_print(f"- Usuario autenticado: {result['viewer']['login']}")
-            self.debug_print(f"- Nombre: {result['viewer']['name']}")
+            print("\nGitHub connection successful")
         except Exception as e:
-            self.debug_print(f"\nError al conectar con GitHub: {str(e)}")
+            print(f"\nError al conectar con GitHub: {str(e)}")
             raise
 
     async def list_projects(self) -> None:
