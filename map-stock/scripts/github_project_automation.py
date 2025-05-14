@@ -64,8 +64,8 @@ class GitHubProjectAutomation:
         self.debug_mode = "#debug-hook" in message.lower()
 
     def debug_print(self, message: str) -> None:
-        """Imprime mensajes solo si no estamos en modo debug"""
-        if not self.debug_mode:
+        """Imprime mensajes solo si estamos en modo debug"""
+        if self.debug_mode:
             print(message)
 
     async def verify_connection(self) -> None:
@@ -723,3 +723,4 @@ if __name__ == "__main__":
     
     commit_message = sys.argv[1]
     asyncio.run(process_commit_message(commit_message)) 
+    
