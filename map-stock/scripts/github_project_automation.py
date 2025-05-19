@@ -429,10 +429,6 @@ class GitHubProjectAutomation:
                                     id
                                     name
                                 }
-                                ... on ProjectV2NumberField {
-                                    id
-                                    name
-                                }
                             }
                         }
                     }
@@ -501,7 +497,7 @@ class GitHubProjectAutomation:
                     elif field_name in ['start', 'end']:
                         field_type = 'date'
                     elif field_name == 'estimate':
-                        field_type = 'number'
+                        field_type = 'text'
                     break
             
             if not field_id:
@@ -567,7 +563,7 @@ class GitHubProjectAutomation:
                     }
                 }
             
-            elif field_type == 'number':
+            elif field_type == 'text':
                 mutation = gql("""
                     mutation($input: UpdateProjectV2ItemFieldValueInput!) {
                         updateProjectV2ItemFieldValue(input: $input) {
@@ -584,7 +580,7 @@ class GitHubProjectAutomation:
                         "itemId": project_item_id,
                         "fieldId": field_id,
                         "value": {
-                            "text": str(field_value)
+                            "text": field_value
                         }
                     }
                 }
