@@ -302,7 +302,7 @@ class GitHubProjectAutomation:
                 query($owner: String!, $repo: String!, $projectNumber: Int!, $issueNumber: Int!) {
                     repository(owner: $owner, name: $repo) {
                         projectV2(number: $projectNumber) {
-                            items(first: 100) {
+                            items(first: 100, filter: {contentTypes: [ISSUE]}) {
                                 nodes {
                                     id
                                     content {
@@ -450,7 +450,7 @@ class GitHubProjectAutomation:
             query($owner: String!, $repo: String!, $projectNumber: Int!, $issueNumber: Int!) {
                 repository(owner: $owner, name: $repo) {
                     projectV2(number: $projectNumber) {
-                        items(first: 100) {
+                        items(first: 100, filter: {contentTypes: [ISSUE]}) {
                             nodes {
                                 id
                                 content {
