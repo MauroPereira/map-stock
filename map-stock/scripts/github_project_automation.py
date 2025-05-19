@@ -383,8 +383,8 @@ class GitHubProjectAutomation:
         
         # Buscar fechas con formato #start:YYYY-MM-DD o #end:YYYY-MM-DD
         date_patterns = {
-            'start': r"#start:(\d{4}-\d{2}-\d{2})",
-            'end': r"#end:(\d{4}-\d{2}-\d{2})"
+            'Start date': r"#start:(\d{4}-\d{2}-\d{2})",
+            'End date': r"#end:(\d{4}-\d{2}-\d{2})"
         }
         
         for field, pattern in date_patterns.items():
@@ -492,9 +492,9 @@ class GitHubProjectAutomation:
                     field_id = field['id']
                     if 'options' in field:
                         field_type = 'singleSelect'
-                    elif field_name in ['start', 'end']:
+                    elif field_name in ['Start date', 'End date']:
                         field_type = 'date'
-                    elif field_name == 'estimate':
+                    elif field_name == 'Estimate':
                         field_type = 'text'
                     break
             
