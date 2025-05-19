@@ -513,6 +513,10 @@ class GitHubProjectAutomation:
             field_id = None
             field_type = None
             
+            # Ignorar campos que no son del proyecto
+            if field_name in ['assignees', 'labels']:
+                continue
+                
             # Buscar el campo en el proyecto
             for field in project['fields']['nodes']:
                 if field['name'] == FIELD_MAP.get(field_name, {}).get('field_name', field_name):
