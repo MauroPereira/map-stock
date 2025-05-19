@@ -808,5 +808,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     commit_message = sys.argv[1]
-    asyncio.run(process_commit_message(commit_message)) 
-    
+    asyncio.run(process_commit_message(commit_message))
