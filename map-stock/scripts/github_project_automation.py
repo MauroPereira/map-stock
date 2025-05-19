@@ -584,7 +584,7 @@ class GitHubProjectAutomation:
                         "itemId": project_item_id,
                         "fieldId": field_id,
                         "value": {
-                            "number": float(field_value)
+                            "text": str(field_value)
                         }
                     }
                 }
