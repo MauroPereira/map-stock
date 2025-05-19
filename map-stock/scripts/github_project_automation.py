@@ -495,7 +495,7 @@ class GitHubProjectAutomation:
                     elif field_name in ['Start date', 'End date']:
                         field_type = 'date'
                     elif field_name == 'Estimate':
-                        field_type = 'text'
+                        field_type = 'number'
                     break
             
             if not field_id:
@@ -579,6 +579,28 @@ class GitHubProjectAutomation:
                         "fieldId": field_id,
                         "value": {
                             "text": field_value
+                        }
+                    }
+                }
+            
+            elif field_type == 'number':
+                mutation = gql("""
+                    mutation($input: UpdateProjectV2ItemFieldValueInput!) {
+                        updateProjectV2ItemFieldValue(input: $input) {
+                            projectV2Item {
+                                id
+                            }
+                        }
+                    }
+                """)
+                
+                variables = {
+                    "input": {
+                        "projectId": project['id'],
+                        "itemId": project_item_id,
+                        "fieldId": field_id,
+                        "value": {
+                            "number": float(field_value)
                         }
                     }
                 }
