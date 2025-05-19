@@ -399,6 +399,16 @@ class GitHubProjectAutomation:
         if estimate_match:
             field_values['Estimate'] = estimate_match.group(1)
         
+        # Buscar assignees con formato #assign:@usuario1,@usuario2
+        assignees_match = re.search(r"#assign:([@\w,]+)", message)
+        if assignees_match:
+            field_values['assignees'] = [user.strip() for user in assignees_match.group(1).split(',')]
+        
+        # Buscar labels con formato #label:label1,label2
+        labels_match = re.search(r"#label:([\w-]+(?:,[\w-]+)*)", message)
+        if labels_match:
+            field_values['labels'] = [label.strip() for label in labels_match.group(1).split(',')]
+        
         return field_values
 
     async def wait_for_issue_in_project(self, issue_number: str, max_retries: int = 3, delay: int = 2) -> str:
@@ -628,7 +638,7 @@ class GitHubProjectAutomation:
             except Exception as e:
                 print(f"Error al actualizar el campo {field_name}: {str(e)}")
 
-    async def create_issue(self, title: str, body: str = "") -> str:
+    async def create_issue(self, title: str, body: str = "", field_values: Dict[str, str] = None) -> str:
         """Crea una nueva issue en el repositorio"""
         mutation = gql("""
             mutation($input: CreateIssueInput!) {
@@ -642,12 +652,58 @@ class GitHubProjectAutomation:
             }
         """)
         
+        input_data = {
+            "repositoryId": self.repository_id,
+            "title": title,
+            "body": body
+        }
+        
+        # Agregar assignees si están presentes
+        if field_values and 'assignees' in field_values:
+            input_data["assigneeIds"] = []
+            for assignee in field_values['assignees']:
+                # Obtener el ID del usuario
+                user_query = gql("""
+                    query($login: String!) {
+                        user(login: $login) {
+                            id
+                        }
+                    }
+                """)
+                try:
+                    user_result = await self.client.execute_async(user_query, variable_values={"login": assignee.strip('@')})
+                    if user_result['user']:
+                        input_data["assigneeIds"].append(user_result['user']['id'])
+                except Exception as e:
+                    self.debug_print(f"Error al obtener ID del usuario {assignee}: {str(e)}")
+        
+        # Agregar labels si están presentes
+        if field_values and 'labels' in field_values:
+            input_data["labelIds"] = []
+            for label in field_values['labels']:
+                # Obtener el ID del label
+                label_query = gql("""
+                    query($owner: String!, $repo: String!, $name: String!) {
+                        repository(owner: $owner, name: $repo) {
+                            label(name: $name) {
+                                id
+                            }
+                        }
+                    }
+                """)
+                try:
+                    label_result = await self.client.execute_async(label_query, variable_values={
+                        "owner": REPO_OWNER,
+                        "repo": REPO_NAME,
+                        "name": label
+                    })
+                    if label_result['repository']['label']:
+                        input_data["labelIds"].append(label_result['repository']['label']['id'])
+                except Exception as e:
+                    self.debug_print(f"Error al obtener ID del label {label}: {str(e)}")
+        
         variables = {
-            "input": {
-                "repositoryId": self.repository_id,
-                "title": title,
-                "body": body
-            }
+            "input": input_data
         }
         
         try:
@@ -716,7 +772,7 @@ async def process_commit_message(message: str) -> None:
         if not issue_number:
             # Si no hay número de issue, crear una nueva
             title = message.split('#')[0].strip()  # Usar el mensaje como título
-            result = await automation.create_issue(title)
+            result = await automation.create_issue(title, field_values=field_values)
             # Extraer el número de la issue del resultado
             issue_number = result.split('#')[1].split()[0]  # Obtener el número después del #
             automation.debug_print(f"Usando issue #{issue_number}")
