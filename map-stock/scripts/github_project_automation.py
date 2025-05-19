@@ -7,6 +7,8 @@ from gql.transport.aiohttp import AIOHTTPTransport
 from dotenv import load_dotenv
 import re
 import json
+import asyncio
+import time
 
 # Cargar variables de entorno
 load_dotenv()
@@ -399,6 +401,55 @@ class GitHubProjectAutomation:
         
         return field_values
 
+    async def wait_for_issue_in_project(self, issue_number: str, max_retries: int = 3, delay: int = 2) -> str:
+        """Espera a que la issue aparezca en el proyecto con reintentos"""
+        for attempt in range(max_retries):
+            try:
+                # Obtener el ID del item del proyecto
+                get_item_query = gql("""
+                    query($owner: String!, $repo: String!, $projectNumber: Int!) {
+                        repository(owner: $owner, name: $repo) {
+                            projectV2(number: $projectNumber) {
+                                items(first: 100) {
+                                    nodes {
+                                        id
+                                        content {
+                                            ... on Issue {
+                                                number
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                """)
+                
+                get_item_variables = {
+                    "owner": REPO_OWNER,
+                    "repo": REPO_NAME,
+                    "projectNumber": PROJECT_NUMBER
+                }
+                
+                get_item_result = await self.client.execute_async(get_item_query, variable_values=get_item_variables)
+                
+                for item in get_item_result['repository']['projectV2']['items']['nodes']:
+                    if item['content']['number'] == int(issue_number):
+                        return item['id']
+                
+                if attempt < max_retries - 1:
+                    self.debug_print(f"Intento {attempt + 1}: Esperando {delay} segundos para que la issue aparezca en el proyecto...")
+                    await asyncio.sleep(delay)
+                else:
+                    raise ValueError(f"No se pudo encontrar la issue #{issue_number} en el proyecto después de {max_retries} intentos")
+                
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    self.debug_print(f"Intento {attempt + 1}: Error al buscar la issue: {str(e)}")
+                    await asyncio.sleep(delay)
+                else:
+                    raise
+
     async def update_issue_fields(self, issue_number: str, field_values: Dict[str, str]) -> None:
         """Actualiza los campos adicionales de una issue"""
         if not field_values:
@@ -444,42 +495,8 @@ class GitHubProjectAutomation:
         result = await self.client.execute_async(query, variable_values=variables)
         project = result['repository']['projectV2']
         
-        # Obtener el ID del item del proyecto
-        get_item_query = gql("""
-            query($owner: String!, $repo: String!, $projectNumber: Int!) {
-                repository(owner: $owner, name: $repo) {
-                    projectV2(number: $projectNumber) {
-                        items(first: 100) {
-                            nodes {
-                                id
-                                content {
-                                    ... on Issue {
-                                        number
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        """)
-        
-        get_item_variables = {
-            "owner": REPO_OWNER,
-            "repo": REPO_NAME,
-            "projectNumber": PROJECT_NUMBER
-        }
-        
-        get_item_result = await self.client.execute_async(get_item_query, variable_values=get_item_variables)
-        project_item_id = None
-        
-        for item in get_item_result['repository']['projectV2']['items']['nodes']:
-            if item['content']['number'] == int(issue_number):
-                project_item_id = item['id']
-                break
-        
-        if not project_item_id:
-            raise ValueError(f"No se pudo encontrar la issue #{issue_number} en el proyecto")
+        # Esperar a que la issue aparezca en el proyecto
+        project_item_id = await self.wait_for_issue_in_project(issue_number)
         
         # Actualizar cada campo
         for field_name, field_value in field_values.items():
