@@ -13,13 +13,33 @@ Keywords
 
 Additional Fields
 ---------------
-You can also set other project fields using keywords in the commit message:
+You can set additional fields in your commit message using the following format:
 
-- Priority: #priority:P0, #priority:P1, #priority:P2
-- Size: #size:XS, #size:S, #size:M, #size:L, #size:XL
-- Estimate: #estimate:N (where N is a number)
-- Start date: #start:YYYY-MM-DD
-- End date: #end:YYYY-MM-DD
+1. Priority: #priority:P0, P1, or P2
+   Example: #priority:P1
+
+2. Size: #size:XS, S, M, L, or XL
+   Example: #size:L
+
+3. Estimate: #estimate:N (where N is a number)
+   Example: #estimate:3
+
+4. Start Date: #start:YYYY-MM-DD
+   Example: #start:2024-03-20
+
+5. End Date: #end:YYYY-MM-DD
+   Example: #end:2024-03-25
+
+6. Assignees: #assign:@user1,@user2
+   Example: #assign:@MauroPereira,@otherUser
+   Note: You can specify multiple users separated by commas
+
+7. Labels: #label:label1,label2
+   Example: #label:bug,feature
+   Note: You can specify multiple labels separated by commas
+
+You can combine multiple fields in a single commit message:
+git commit -m "Implement new feature #priority:P1 #size:M #estimate:3 #start:2024-03-20 #end:2024-03-25 #assign:@MauroPereira #label:feature,frontend"
 
 Debug Mode
 ---------
@@ -29,7 +49,7 @@ Usage
 -----
 1. Create a new issue:
    ```bash
-   python3 github_project_automation.py "Implement new feature #in-progress #priority:P0 #size:M"
+   python3 github_project_automation.py "Implement new feature #in-progress #priority:P0 #size:M #assign:@user1 #label:feature"
    ```
    Note: The text before the keyword will be used as the issue title exactly as written.
 
@@ -43,7 +63,7 @@ Usage
 
 3. Update issue fields:
    ```bash
-   python3 github_project_automation.py "Update issue fields #123 #priority:P1 #size:L #estimate:3 #start:2024-03-20 #end:2024-03-25"
+   python3 github_project_automation.py "Update issue fields #123 #priority:P1 #size:L #estimate:3 #start:2024-03-20 #end:2024-03-25 #assign:@user1,@user2 #label:bug,enhancement"
    ```
 
 4. Debug mode:
@@ -55,32 +75,37 @@ Examples
 --------
 1. Create a new issue and move it to "In progress":
    ```bash
-   python3 github_project_automation.py "Implement authentication system #in-progress"
+   python3 github_project_automation.py "Implement authentication system #in-progress #assign:@developer"
    ```
 
 2. Move an existing issue to "Done":
    ```bash
-   python3 github_project_automation.py "Complete task #done #456"
+   python3 github_project_automation.py "Complete task #done #456 #label:completed"
    ```
 
 3. Create an issue and move it to "Backlog":
    ```bash
-   python3 github_project_automation.py "New feature idea #backlog"
+   python3 github_project_automation.py "New feature idea #backlog #assign:@product-owner #label:enhancement"
    ```
 
 4. Move an issue with descriptive commit message:
    ```bash
-   python3 github_project_automation.py "Completed all requirements, added unit tests, and documented the changes #done #789"
+   python3 github_project_automation.py "Completed all requirements, added unit tests, and documented the changes #done #789 #assign:@tester #label:tested"
    ```
 
 5. Create an issue with all fields:
    ```bash
-   python3 github_project_automation.py "Implement new feature #in-progress #priority:P0 #size:M #estimate:2 #start:2024-03-20 #end:2024-03-25"
+   python3 github_project_automation.py "Implement new feature #in-progress #priority:P0 #size:M #estimate:2 #start:2024-03-20 #end:2024-03-25 #assign:@developer,@designer #label:feature,frontend"
    ```
 
 6. Debug mode example:
    ```bash
-   python3 github_project_automation.py "Update issue with debug info #done #123 #priority:P1 #debug-hook"
+   python3 github_project_automation.py "Update issue with debug info #done #123 #priority:P1 #assign:@reviewer #label:reviewed #debug-hook"
+   ```
+
+7. Create an issue with multiple assignees and labels:
+   ```bash
+   python3 github_project_automation.py "Team task #backlog #assign:@lead,@developer,@designer #label:team,planning,high-priority"
    ```
 
 Git Hook Setup

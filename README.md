@@ -6,7 +6,7 @@ Electronic equipment stock system.
 ## Python base
 
 ### Version used
-3.13.0
+3.14.0
 
 ### Required system packages before compiling and installing Python
 <pre><code>sudo apt install -y build-essential libffi-dev ncurses-dev python3-tk zlib1g-dev libssl-dev python3-virtualenv libsqlite3-dev peewee</code></pre>
@@ -45,3 +45,4 @@ Electronic equipment stock system.
 - 3.11.0: Allows creating boards groups.
 - 3.12.0: Added GitHub Projects integration with automatic issue creation and management through git commit messages. This feature allows you to create and move issues in your GitHub Projects board by using specific keywords in your commit messages (#backlog, #ready, #in-progress, #review, #done).
 - 3.13.0: Added support for setting additional fields in issues through commit messages (#priority, #size, #estimate, #start, #end). Added debug mode with #debug-hook keyword to show detailed information about the automation process.
+- 3.14.0: Added support for assignees and labels in issues through commit messages (#assign:@user1,@user2 and #label:label1,label2). Improved error handling and retry mechanism for project field updates.
