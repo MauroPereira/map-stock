@@ -395,7 +395,7 @@ class GitHubProjectAutomation:
         # Buscar estimación con formato #estimate:N
         estimate_match = re.search(r"#estimate:(\d+)", message)
         if estimate_match:
-            field_values['estimate'] = estimate_match.group(1)
+            field_values['Estimate'] = estimate_match.group(1)
         
         return field_values
 
