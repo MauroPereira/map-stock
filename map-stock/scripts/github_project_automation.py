@@ -299,7 +299,7 @@ class GitHubProjectAutomation:
         except Exception as e:
             # Si la issue ya está en el proyecto, obtener su ID
             get_item_query = gql("""
-                query($owner: String!, $repo: String!, $projectNumber: Int!, $issueNumber: Int!) {
+                query($owner: String!, $repo: String!, $projectNumber: Int!) {
                     repository(owner: $owner, name: $repo) {
                         projectV2(number: $projectNumber) {
                             items(first: 100) {
@@ -320,8 +320,7 @@ class GitHubProjectAutomation:
             get_item_variables = {
                 "owner": REPO_OWNER,
                 "repo": REPO_NAME,
-                "projectNumber": PROJECT_NUMBER,
-                "issueNumber": int(issue_number)
+                "projectNumber": PROJECT_NUMBER
             }
             
             get_item_result = await self.client.execute_async(get_item_query, variable_values=get_item_variables)
@@ -447,7 +446,7 @@ class GitHubProjectAutomation:
         
         # Obtener el ID del item del proyecto
         get_item_query = gql("""
-            query($owner: String!, $repo: String!, $projectNumber: Int!, $issueNumber: Int!) {
+            query($owner: String!, $repo: String!, $projectNumber: Int!) {
                 repository(owner: $owner, name: $repo) {
                     projectV2(number: $projectNumber) {
                         items(first: 100) {
@@ -468,8 +467,7 @@ class GitHubProjectAutomation:
         get_item_variables = {
             "owner": REPO_OWNER,
             "repo": REPO_NAME,
-            "projectNumber": PROJECT_NUMBER,
-            "issueNumber": int(issue_number)
+            "projectNumber": PROJECT_NUMBER
         }
         
         get_item_result = await self.client.execute_async(get_item_query, variable_values=get_item_variables)
@@ -711,5 +709,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     commit_message = sys.argv[1]
-    asyncio.run(process_commit_message(commit_message)) 
-    
+    asyncio.run(process_commit_message(commit_message))     
