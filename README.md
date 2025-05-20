@@ -1,45 +1,49 @@
 # MAP Stock
 
-## Introducción
-Sistema de stock de equipos electrónicos.
+## Introduction
+Electronic equipment stock system.
 
 ## Python base
 
-### Versión utilizada
-3.10.4
+### Version used
+3.15.0
 
-### Paquetes necesarios en el SO antes de compilar e instalar Python 
+### Required system packages before compiling and installing Python
 <pre><code>sudo apt install -y build-essential libffi-dev ncurses-dev python3-tk zlib1g-dev libssl-dev python3-virtualenv libsqlite3-dev peewee</code></pre>
 
-### Descomprimir
+### Extract
 <pre><code>tar -Jxvf Python-3.10.4.tar.xz</code></pre>
 
-### Instalar
+### Install
 <pre><code>cd Python-3.10.4 && ./configure && make && sudo make install</code></pre>
 
-## Entornos virtuales y configuración final
+## Virtual environments and final configuration
 
-### Creación de entornos virtuales
+### Create virtual environments
 <pre><code>virtualenv -p /home/mauro/python/Python-3.10.4/python /home/mauro/python/vir_python/py39_map-stock_env</code></pre>
 
-### Activar entorno virtual
+### Activate virtual environment
 <pre><code>source /home/mauro/python/vir_python/py39_map-stock_env/bin/activate</code></pre>
 
-### Actualizar Pip3
+### Update Pip3
 <pre><code>python3 -m pip install --upgrade pip</code></pre>
 
-### Actualizar setuptools
+### Update setuptools
 <pre><code>pip install -U setuptools</pre></code>
 
-### Paquetes necesarios para desarrollo
+### Required development packages
 <pre><code>pip3 install -r ~/repos/map/map-stock/map-stock/requirements_dev.txt</code></pre>
 
-### Paquetes necesarios para producción
+### Required production packages
 <pre><code>pip3 install -r ~/repos/map/map-stock/map-stock/requirements.txt</code></pre>
 
-### Desactivar entorno virtual
+### Deactivate virtual environment
 <pre><code>deactivate</code></pre>
 
-## Versiones
-* stock-mb_v0.1
-  Permite agregar y borrar Productos por el cliente/servidor. Funciona la parte gráfica.
+## Versions
+- stock-mb_v0.1: Allows adding and deleting Products by client/server. GUI functionality works.
+- 3.11.0: Allows creating boards groups.
+- 3.12.0: Added GitHub Projects integration with automatic issue creation and management through git commit messages. This feature allows you to create and move issues in your GitHub Projects board by using specific keywords in your commit messages (#backlog, #ready, #in-progress, #review, #done).
+- 3.13.0: Added support for setting additional fields in issues through commit messages (#priority, #size, #estimate, #start, #end). Added debug mode with #debug-hook keyword to show detailed information about the automation process.
+- 3.14.0: Added support for assignees and labels in issues through commit messages (#assign:@user1,@user2 and #label:label1,label2). Improved error handling and retry mechanism for project field updates.
+- 3.15.0: Improved client-server communication with better message handling and status code validation. Added support for OKD_CHAR status code to handle successful operations with data return. Enhanced error detection and reporting in client-server interactions.

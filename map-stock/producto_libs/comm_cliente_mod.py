@@ -144,9 +144,11 @@ class CommCliente:
         """
         Chequea el estado del mensaje recibido
         """
-        if convert_bytearrays_to_str(
-            self.value_received
-        ) == convert_bytearrays_to_str(char_to_bytes(OK_CHAR)):
+        # Tomamos solo los primeros 2 bytes del mensaje recibido
+        first_bytes = self.value_received[:2]
+        received_str = convert_bytearrays_to_str(first_bytes)
+        if (received_str == convert_bytearrays_to_str(char_to_bytes(OK_CHAR)) or 
+            received_str == convert_bytearrays_to_str(char_to_bytes(OKD_CHAR))):
             print("Operación exitosa")
         else:
             print("Error de operación")
@@ -167,27 +169,5 @@ class CommCliente:
 
 
 if __name__ == "__main__":
+    pass
 
-    envio_producto = CommCliente()
-
-    """
-    # Carga de producto
-    envio_producto.load_data_int(CREATE_CHAR)
-    envio_producto.load_data_str("Tomate")
-    envio_producto.load_data_str("Vanesa")
-    envio_producto.load_data_str("10.22")
-    envio_producto.send_and_receive_data()
-    envio_producto.print_received_data()
-    envio_producto.check_received_data()
-    envio_producto.erase_sent_and_received_data()
-    """
-
-    # Se pide información de un producto en específicoq
-    envio_producto.load_data_int(READ_ID_CHAR)  # "<"
-    envio_producto.load_data_str("50")  # ID 3
-    envio_producto.send_and_receive_data()
-    envio_producto.print_received_data()
-    envio_producto.check_received_data()
-    envio_producto.erase_sent_and_received_data()
-
-    envio_producto.close_conection()
