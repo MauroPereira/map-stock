@@ -144,9 +144,11 @@ class CommCliente:
         """
         Chequea el estado del mensaje recibido
         """
-        if convert_bytearrays_to_str(
-            self.value_received
-        ) == convert_bytearrays_to_str(char_to_bytes(OK_CHAR)):
+        # Tomamos solo los primeros 2 bytes del mensaje recibido
+        first_bytes = self.value_received[:2]
+        received_str = convert_bytearrays_to_str(first_bytes)
+        if (received_str == convert_bytearrays_to_str(char_to_bytes(OK_CHAR)) or 
+            received_str == convert_bytearrays_to_str(char_to_bytes(OKD_CHAR))):
             print("Operación exitosa")
         else:
             print("Error de operación")
