@@ -1,7 +1,7 @@
 import React from 'react';
 import './Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ onLogout }) => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -24,6 +24,9 @@ const Navbar = () => {
 
       <div className="navbar-end">
         <button className="btn-primary">Nuevo Producto</button>
+        <button onClick={onLogout} className="btn-logout">
+          Cerrar Sesión
+        </button>
       </div>
     </nav>
   );
