@@ -1,0 +1,119 @@
+name: Create or destroy S3 and dinamoDB backend
+# NOTE: only for this terraform the backend is local
+
+on:
+#   push:
+#       branches:
+#           - test
+  workflow_dispatch:
+      inputs:
+          # Terraform action you want to perform
+          action:
+            description: 'Terraform Action to Perform'
+            type: choice
+            options:
+            - terraform_create_backend
+            - terraform_destroy_backend
+
+jobs:
+  terraform_create_backend:
+    if: ${{ github.event.inputs.action == 'terraform_create_backend' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: create_or_destroy_backed
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+        working-directory: create_or_destroy_backed
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        continue-on-error: false
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: create_or_destroy_backed
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        continue-on-error: false
+
+  terraform_destroy_backend:
+    if: ${{ github.event.inputs.action == 'terraform_destroy_backend' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        id: init
+        run: |
+            echo "Initializing Terraform..."
+            terraform init
+        working-directory: create_or_destroy_backed    
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        continue-on-error: false      
+
+      - name: Importing Init
+        id: importing
+        run: |
+            echo "Initializing Terraform..."
+            terraform init
+        
+            echo "Importing existing S3 bucket..."
+            terraform import aws_s3_bucket.terraform_state_bucket mundose222-mauro-a-pereira
+        
+            echo "Importing existing DynamoDB table..."
+            terraform import aws_dynamodb_table.terraform_lock_table terraformstatelock
+        working-directory: create_or_destroy_backed    
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}    
+        continue-on-error: false  
+  
+      - name: Display Terraform State
+        id: display_tfstate
+        run: |
+            echo "Displaying generated terraform.tfstate file:"
+            cat terraform.tfstate
+        working-directory: create_or_destroy_backed
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        continue-on-error: false
+    
+      - name: Terraform Destroy
+        id: destroy
+        # working-directory: ${{ github.event.inputs.resource }}
+        run: terraform destroy -auto-approve
+        working-directory: create_or_destroy_backed
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        continue-on-error: false
