@@ -26,9 +26,9 @@ jobs:
           # Option to disable logging of commands, where the password is being watched, is using 'set +x' 
           # before and after the critical command.
 
-          set +x  # Deshabilita el logging de comandos
+          set +x  # Disable logging of commands
           echo "$REGISTRY_PASSWORD" | docker login http://www.map-systems.online -u admin --password-stdin
-          set +x  # Deshabilita el logging de comandos
+          set +x  # Enable logging of commands again
 
       - name: Build and push Docker image
         run: |
