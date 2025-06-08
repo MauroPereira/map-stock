@@ -23,7 +23,12 @@ jobs:
         env:
           REGISTRY_PASSWORD: ${{ github.event.inputs.registry_password }}
         run: |
+          # Option to disable logging of commands, where the password is being watched, is using 'set +x' 
+          # before and after the critical command.
+
+          set +x  # Deshabilita el logging de comandos
           echo "$REGISTRY_PASSWORD" | docker login http://www.map-systems.online -u admin --password-stdin
+          set +x  # Deshabilita el logging de comandos
 
       - name: Build and push Docker image
         run: |
