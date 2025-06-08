@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+env:
+  ACTIONS_STEP_DEBUG: false # Disable logging of commands to avoid password being watched
+
 jobs:
   build-and-push:
     name: Build and push
@@ -23,12 +26,7 @@ jobs:
         env:
           REGISTRY_PASSWORD: ${{ github.event.inputs.registry_password }}
         run: |
-          # Option to disable logging of commands, where the password is being watched, is using 'set +x' 
-          # before and after the critical command.
-
-          set +x  # Disable logging of commands
           echo "$REGISTRY_PASSWORD" | docker login http://www.map-systems.online -u admin --password-stdin
-          set +x  # Enable logging of commands again
 
       - name: Build and push Docker image
         run: |
